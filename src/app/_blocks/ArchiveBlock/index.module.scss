@@ -1,0 +1,90 @@
+@import '../../_css/common';
+
+.archiveBlock {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.introContent {
+  width: 50vw;
+  margin-top: calc(var(--base) * 2);
+  margin-bottom: calc(var(--base) * 2);
+
+  @include mid-break {
+    width: 100%;
+    // margin-bottom: calc(var(--base) * 2);
+  }
+}
+
+.projects {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  font-family: var(--font-work-sans);
+  padding: 8px;
+
+  h2, p {
+    margin: 0 0;
+    line-height: 92%;
+    // desktop view
+    @media screen and (min-width: 600px) {
+      // text-align: center;
+    }
+  }
+
+  h2 {
+    text-transform: uppercase;
+    font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
+  }
+  p {
+    font: 500 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
+  }
+
+  div:nth-of-type(2){
+    flex: 1;
+    gap: 8px;
+
+    @media screen {
+      gap: 16px;
+    }
+  }  
+
+  div[class^="Card_card"] {
+    // background-color: #fff;
+    border: 2px solid var(--theme-color-secondary);
+    border-radius: 8px;
+    background-color: var(--theme-color-primary);
+
+    p {
+      font: 400 max(16px, 1vw) / max(20px, 1.5vw) var(--font-work-sans);
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;  
+    opacity: 0.25; 
+    z-index: -1;
+    background: url('/media/dot_background.png');
+
+    [data-theme="dark"] & {
+      filter: invert(1)
+    }
+  }
+
+  @include mid-break {
+    padding: 0;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    height: fit-content;
+  }
+}

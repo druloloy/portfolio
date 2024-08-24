@@ -1,0 +1,33 @@
+@import '../../_css/common';
+
+.introContent {
+  margin-top: calc(var(--base) * 2);
+  margin-bottom: calc(var(--base) * 2);
+  color: var(--theme-color-secondary);
+
+  @include mid-break {
+    margin-bottom: calc(var(--base) * 2);
+  }
+}
+
+.stacksParade {
+  position: relative;
+  color: var(--theme-color-secondary);
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    text-transform: uppercase;
+    font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
+  }
+
+  p {
+    font: 500 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
+  }
+
+  @media screen and (min-width: 600px) {
+    h2, p {
+      text-align: center;
+    }
+  }
+}

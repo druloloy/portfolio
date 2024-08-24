@@ -1,0 +1,41 @@
+.themeSelector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-color-secondary);
+  font: 700 16px / 24px var(--font-space-grotesk);
+  padding: 0 16px;
+
+  & *:hover {
+    cursor: pointer;
+  }
+
+  label {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.spin {
+  animation: spin .5s linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1;
+    pointer-events: none;
+    filter: blur(0);
+  }
+  50% {
+    transform: rotate(180deg);
+    opacity: 0.3;
+    filter: blur(1px);
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 1;
+    pointer-events: all;
+    filter: blur(0);
+  }
+}

@@ -1,0 +1,24 @@
+@import '../../_css/common';
+
+.stacks {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stacks__container {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h3 {
+    text-transform: uppercase;
+    font: 700 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
+  }
+}

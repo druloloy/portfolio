@@ -1,0 +1,91 @@
+@import '../../_css/common';
+
+// this is to make up for the space taken by the fixed header, since the scroll method does not accept an offset parameter
+.scrollRef {
+  position: absolute;
+  left: 0;
+  top: calc(var(--base) * -5);
+  @include mid-break {
+    top:  calc(var(--base) * -2);
+  }
+}
+
+.collectionArchive {
+  width: 150%;
+  transform: translateX(25%);
+  transition: transform 800ms ease-out;
+  scroll-behavior: smooth;
+}
+
+.introContent {
+  position: relative;
+  margin-bottom: calc(var(--base) * 2);
+
+  @include mid-break {
+    margin-bottom: var(--base);
+  }
+}
+
+.resultCountWrapper {
+  display: flex;
+  margin-bottom: calc(var(--base) * 2);
+
+  @include mid-break {
+    margin-bottom: var(--base);
+  }
+}
+
+.pageRange {
+  margin-bottom: var(--base);
+
+  @include mid-break {
+    margin-bottom: var(--base);
+  }
+}
+
+.list {
+  position: relative;
+}
+
+.grid {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  // display: grid;
+  // grid-template-columns: repeat(4, 1fr);
+  // width: 100%;
+  gap: var(--base) 0px;
+
+  // @include mid-break {
+  //   grid-template-columns: repeat(6, 1fr);
+  //   gap: calc(var(--base) / 2) var(--base);
+  // }
+
+  @include mid-break {
+    height: fit-content;
+  }
+}
+
+.column {
+  flex: 1;
+  max-width: 400px;
+  height: auto;
+  transition: width 500ms ease-in-out;
+  color: var(--theme-color-secondary);
+  overflow: hidden;
+
+  @include mid-break {
+    max-width: 300px;
+  }
+}
+
+.pagination {
+  margin-top: calc(var(--base) * 2);
+
+  @include mid-break {
+    margin-top: var(--base);
+  }
+}

@@ -1,0 +1,45 @@
+.marquee {  
+    --scroll-speed: 15s;
+    --gap: calc(4vw);
+    width: 100%;
+    overflow: hidden;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    gap: var(--gap);
+    user-select: none;
+
+    @media screen and (min-width: 768px) {
+        gap: var(--gap);
+    }
+}
+
+.marquee__items {
+    // width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--gap);
+
+    animation-name: slide;
+    animation-duration: var(--scroll-speed);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    @media screen and (min-width: 768px) {
+        gap: var(--gap);
+    }
+}
+
+.marquee__items.reverse{
+    animation-direction: reverse;
+}
+
+@keyframes slide {
+    to {
+        transform: translateX(calc(-100% - var(--gap)));
+    }
+}

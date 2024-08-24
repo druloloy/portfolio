@@ -1,0 +1,45 @@
+@use '../../../_css/queries.scss' as *;
+
+.nav {
+  max-width: 100%;
+  position: relative;
+  display: flex;
+  // gap: calc(var(--base) / 4) var(--base);
+  align-items: center;
+  flex-wrap: nowrap;
+  opacity: 1;
+  transition: opacity 100ms linear;
+  visibility: visible;
+  padding: 0;
+  border-radius: 25px;
+  background-color: var(--theme-color-primary);
+
+  border: 2px solid var(--theme-color-secondary);
+
+  > * {
+    text-decoration: none;
+  
+  }
+
+  a {
+    border: none;
+    box-shadow: none;
+    font: 700 16px / 24px var(--font-space-grotesk);
+    border-right: 2px solid var(--theme-color-secondary);
+    padding: calc(var(--base) / 6) calc(var(--base) / 2 );
+    color: var(--theme-color-secondary);
+  
+    &:last-child {
+      border-right: none;
+    }
+
+    &:hover {
+      scale: 1;
+    }
+  }
+}
+
+.hide {
+  opacity: 0;
+  visibility: hidden;
+}

@@ -1,0 +1,40 @@
+@import '../../_css/queries.scss';
+
+.hero {
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    min-height: 50vh;
+    transform: translateX(-50%);
+    background-color: var(--color-accent-purple);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: calc(var(--block-padding) * 1.5);
+    border-bottom: 4px solid var(--theme-color-secondary);
+    z-index: -1;
+
+    @include mid-break {
+        min-height: 45vh;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%;  
+        opacity: 0.75; 
+        z-index: -1;
+        background: url('/media/dot_background.png');
+    }
+}
+
+.content {
+    font: bold max(36px, 4vw) / max(48px, 5vw) var(--font-space-grotesk);
+    color: var(--color-secondary);
+    text-align: center;
+    text-transform: uppercase;
+}

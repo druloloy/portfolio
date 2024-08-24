@@ -1,0 +1,11 @@
+.header {
+    color: black;
+    width: 100vw;
+    position: fixed;
+    top: var(--base);
+    z-index: 99;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
