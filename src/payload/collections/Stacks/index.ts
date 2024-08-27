@@ -3,7 +3,6 @@ import type { CollectionConfig } from 'payload/types'
 import { admins } from '../../access/admins'
 import { adminsOrPublished } from '../../access/adminsOrPublished'
 import { slugField } from '../../fields/slug'
-import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { revalidateProject } from './hooks/revalidateProject'
 

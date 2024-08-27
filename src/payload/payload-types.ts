@@ -49,8 +49,9 @@ export interface Page {
         indent: number;
         version: number;
       };
+    } | {
       [k: string]: unknown;
-    };
+    }[]
     links?:
       | {
           link: {
@@ -90,19 +91,20 @@ export interface Page {
         invertBackground?: boolean | null;
         richText: {
           root: {
-            type: string;
-            children: {
               type: string;
+              children: {
+                type: string;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
               version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        };
+            };
+          } | {
+            [k: string]: unknown;
+          }[]
         links?:
           | {
               link: {
@@ -142,8 +144,9 @@ export interface Page {
                   indent: number;
                   version: number;
                 };
+              } | {
                 [k: string]: unknown;
-              };
+              }[]
               enableLink?: boolean | null;
               link?: {
                 type?: ('reference' | 'custom') | null;
@@ -274,8 +277,9 @@ export interface Page {
             indent: number;
             version: number;
           };
+        } | {
           [k: string]: unknown;
-        };
+        }[]
         id?: string | null;
         blockName?: string | null;
         blockType: 'projectBlock';
@@ -364,8 +368,9 @@ export interface Post {
         indent: number;
         version: number;
       };
+    } | {
       [k: string]: unknown;
-    };
+    }[]
     links?:
       | {
           link: {
@@ -400,8 +405,9 @@ export interface Post {
             indent: number;
             version: number;
           };
+        } | {
           [k: string]: unknown;
-        };
+        }[]
         links?:
           | {
               link: {
@@ -441,8 +447,9 @@ export interface Post {
                   indent: number;
                   version: number;
                 };
+              } | {
                 [k: string]: unknown;
-              };
+              }[]
               enableLink?: boolean | null;
               link?: {
                 type?: ('reference' | 'custom') | null;
@@ -541,8 +548,9 @@ export interface Post {
                 indent: number;
                 version: number;
               };
+            } | {
               [k: string]: unknown;
-            };
+            }[]
             links?:
               | {
                   link: {
@@ -582,8 +590,9 @@ export interface Post {
                       indent: number;
                       version: number;
                     };
+                  } | {
                     [k: string]: unknown;
-                  };
+                  }[]
                   enableLink?: boolean | null;
                   link?: {
                     type?: ('reference' | 'custom') | null;
@@ -719,8 +728,9 @@ export interface Project {
         indent: number;
         version: number;
       };
+    } | {
       [k: string]: unknown;
-    };
+    }[]
     links?:
       | {
           link: {
@@ -755,8 +765,9 @@ export interface Project {
             indent: number;
             version: number;
           };
+        } | {
           [k: string]: unknown;
-        };
+        }[]
         links?:
           | {
               link: {
@@ -796,8 +807,9 @@ export interface Project {
                   indent: number;
                   version: number;
                 };
+              } | {
                 [k: string]: unknown;
-              };
+              }[]
               enableLink?: boolean | null;
               link?: {
                 type?: ('reference' | 'custom') | null;
@@ -896,8 +908,9 @@ export interface Project {
             indent: number;
             version: number;
           };
+        } | {
           [k: string]: unknown;
-        };
+        }[]
         id?: string | null;
         blockName?: string | null;
         blockType: 'projectBlock';
@@ -927,6 +940,11 @@ export interface Stack {
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    image?: string | Media | null;
+  };
   _status?: ('draft' | 'published') | null;
 }
 /**

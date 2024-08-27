@@ -1,6 +1,9 @@
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloud } from '@payloadcms/plugin-cloud'
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage'
+import type { Adapter } from '@payloadcms/plugin-cloud-storage/dist/types'
+import { gcsAdapter } from '@payloadcms/plugin-cloud-storage/gcs'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
 import redirects from '@payloadcms/plugin-redirects'
 import seo from '@payloadcms/plugin-seo'
@@ -25,6 +28,14 @@ import Logo from './components/Graphics/Logo'
 import { Footer } from './globals/Footer'
 import { Header } from './globals/Header'
 import { Settings } from './globals/Settings'
+
+const adapter: Adapter = gcsAdapter({
+  bucket: process.env.GCS_BUCKET,
+  options: {
+    keyFilename: `./keystore/${process.env.GCS_KEYFILENAME}`,
+    projectId: process.env.GCS_PROJECT_ID,
+  },
+})
 
 const generateTitle: GenerateTitle = () => {
   return 'My Website'
@@ -56,10 +67,10 @@ export default buildConfig({
         alias: {
           ...config.resolve.alias,
           dotenv: path.resolve(__dirname, './dotenv.js'),
-          [path.resolve(__dirname, './endpoints/seed')]: path.resolve(
-            __dirname,
-            './emptyModuleMock.js',
-          ),
+          // [path.resolve(__dirname, './endpoints/seed')]: path.resolve(
+          //   __dirname,
+          //   './emptyModuleMock.js',
+          // ),
         },
       },
     }),
@@ -103,5 +114,12 @@ export default buildConfig({
       uploadsCollection: 'media',
     }),
     payloadCloud(),
+    cloudStorage({
+      collections: {
+        media: {
+          adapter,
+        },
+      },
+    }),
   ],
 })
