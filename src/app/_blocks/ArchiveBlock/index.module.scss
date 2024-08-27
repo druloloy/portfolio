@@ -73,7 +73,7 @@
     height: 100%;  
     opacity: 0.25; 
     z-index: -1;
-    background: url('/media/dot_background.png');
+    background: url('/dot_background.png');
 
     [data-theme="dark"] & {
       filter: invert(1)
