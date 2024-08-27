@@ -7,19 +7,18 @@
  *
  */
 
-import type { DOMExportOutput, LexicalEditor, ParagraphNode } from 'lexical'
-
 import { addClassNamesToElement } from '@lexical/utils'
+import type { DOMExportOutput, LexicalEditor, ParagraphNode } from 'lexical'
 import {
   $applyNodeReplacement,
   $createParagraphNode,
   type EditorConfig,
   ElementNode,
+  isHTMLElement,
   type LexicalNode,
   type NodeKey,
   type RangeSelection,
   type SerializedElementNode,
-  isHTMLElement,
 } from 'lexical'
 
 export type SerializedLargeBodyNode = SerializedElementNode
@@ -59,14 +58,16 @@ export class LargeBodyNode extends ElementNode {
   canInsertTextBefore(): true {
     return true
   }
+
   collapseAtStart(): true {
     const paragraph = $createParagraphNode()
     const children = this.getChildren()
-    children.forEach((child) => paragraph.append(child))
+    children.forEach(child => paragraph.append(child))
     this.replace(paragraph)
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createDOM(config: EditorConfig): HTMLElement {
     const element = document.createElement('span')
     addClassNamesToElement(element, 'largeBody')
@@ -114,6 +115,7 @@ export class LargeBodyNode extends ElementNode {
     return false
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateDOM(prevNode: LargeBodyNode, dom: HTMLElement): boolean {
     return false
   }

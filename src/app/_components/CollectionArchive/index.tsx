@@ -3,7 +3,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import qs from 'qs'
 
-import type { Post, Project } from '../../../payload/payload-types'
+import type { Post, Project, Stack } from '../../../payload/payload-types'
 import type { ArchiveBlockProps } from '../../_blocks/ArchiveBlock/types'
 import { Card } from '../Card'
 import { Gutter } from '../Gutter'
@@ -13,7 +13,7 @@ import { Gutter } from '../Gutter'
 import classes from './index.module.scss'
 
 type Result = {
-  docs: (Post | Project | string)[]
+  docs: (Post | Project | Stack | string)[]
   hasNextPage: boolean
   hasPrevPage: boolean
   nextPage: number

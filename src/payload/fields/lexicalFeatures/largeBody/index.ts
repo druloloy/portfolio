@@ -20,6 +20,7 @@ export const LargeBodyFeature = (): FeatureProvider => {
           FormatSectionWithEntries([
             {
               ChildComponent: () => import('./Icon').then(module => module.LargeBodyIcon),
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               isActive: ({ editor, selection }) => {
                 if ($isRangeSelection(selection)) {
                   const selectedNode = getSelectedNode(selection)
@@ -58,6 +59,7 @@ export const LargeBodyFeature = (): FeatureProvider => {
               new SlashMenuOption(`Large Body`, {
                 Icon: () => import('./Icon').then(module => module.LargeBodyIcon),
                 keywords: ['largeBody'],
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 onSelect: ({ editor }) => {
                   const selection = $getSelection()
                   if ($isRangeSelection(selection)) {
