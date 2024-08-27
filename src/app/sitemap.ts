@@ -1,12 +1,18 @@
 import type { MetadataRoute } from 'next'
 
+import type { Page, Project } from '../payload/payload-types'
+
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { docs: pages } = await fetch(`${serverURL}/api/pages?limit=0`).then(res => {
-    return res.json()
-  })
-  const { docs: projects } = await fetch(`${serverURL}/api/projects?limit=0`).then(res => {
+  const { docs: pages }: { docs: Page[] } = await fetch(`${serverURL}/api/pages?limit=0`).then(
+    res => {
+      return res.json()
+    },
+  )
+  const { docs: projects }: { docs: Project[] } = await fetch(
+    `${serverURL}/api/projects?limit=0`,
+  ).then(res => {
     return res.json()
   })
 
