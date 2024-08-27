@@ -5,6 +5,7 @@ import { Space_Grotesk, Work_Sans } from 'next/font/google'
 import { AdminBar } from './_components/AdminBar'
 import { Footer } from './_components/Footer'
 import { Header } from './_components/Header'
+import { ScrollUp } from './_components/ScrollUp'
 import { Providers } from './_providers'
 import AOSWrapper from './_providers/AOS'
 import { InitTheme } from './_providers/Theme/InitTheme'
@@ -43,6 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </main>
           {/* @ts-expect-error */}
           <Footer />
+          <ScrollUp />
         </Providers>
       </body>
     </html>

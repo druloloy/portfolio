@@ -185,8 +185,6 @@ export const CollectionArchive: React.FC<Props> = props => {
         const cardSize = current.children[1].children[0].getBoundingClientRect().width
         const boundary = carouselWidth - cardSize
 
-        console.log(carouselWidth, cardSize, boundary, translateXValue)
-
         current.style.transform = `translateX(${translateXValue}px)`
         if (y > window.scrollY && translateXValue < boundary) {
           setTranslateXValue(translateXValue + 20)
