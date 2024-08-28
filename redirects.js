@@ -68,24 +68,7 @@ module.exports = async () => {
       })
     }
 
-    const nonWWWRedirect = {
-      source: '/:path*',
-      has: [
-        {
-          type: 'header',
-          key: 'host',
-          value: '^(?!www\\.)',
-        },
-      ],
-      permanent: true,
-      destination: `${process.env.NEXT_PUBLIC_SERVER_URL}/:path*`,
-    }
-
     const redirects = [internetExplorerRedirect, ...dynamicRedirects]
-
-    if (process.env.NEXT_PUBLIC_IS_LIVE) {
-      redirects.push(nonWWWRedirect)
-    }
 
     return redirects
   } catch (error) {
@@ -95,8 +78,4 @@ module.exports = async () => {
 
     return []
   }
-}
-
-function trimUrlWww(url) {
-  return url.replace('https://www.', 'https://').replace('http://www.', 'http://')
 }
