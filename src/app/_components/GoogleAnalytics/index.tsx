@@ -8,7 +8,6 @@ export const GTMDataLayer: React.FC<{ gtmId: string }> = ({ gtmId }) => {
     <Script
       id="gtm"
       strategy="lazyOnload"
-      nonce={nonce}
       dangerouslySetInnerHTML={{
         __html: `
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
