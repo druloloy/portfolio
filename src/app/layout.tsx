@@ -4,6 +4,7 @@ import { Space_Grotesk, Work_Sans } from 'next/font/google'
 
 import { AdminBar } from './_components/AdminBar'
 import { Footer } from './_components/Footer'
+import { GTMDataLayer } from './_components/GoogleAnalytics'
 import { Header } from './_components/Header'
 import { ScrollUp } from './_components/ScrollUp'
 import { Providers } from './_providers'
@@ -30,6 +31,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <GTMDataLayer gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
         <InitTheme />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
