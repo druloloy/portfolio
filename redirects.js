@@ -74,7 +74,7 @@ module.exports = async () => {
         {
           type: 'header',
           key: 'host',
-          value: /^(?:https?:\/\/)?([^\s.]+\.[^\s.]+)(?:\/|\?|$)?$/,
+          value: '^(?:https?:\\/\\/)?([^\\s.]+\\.[^\\s.]+)(?:\\/|\\?|$)?$',
         },
       ],
       permanent: true,
