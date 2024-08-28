@@ -68,7 +68,20 @@ module.exports = async () => {
       })
     }
 
-    const redirects = [internetExplorerRedirect, ...dynamicRedirects]
+    const nonWWWRedirect = {
+      source: '/:path*',
+      has: [
+        {
+          type: 'header',
+          key: 'host',
+          value: '^(?:https?://)?([^s.]+.[^s.]+)(?:/|?|$)?$',
+        },
+      ],
+      permanent: true,
+      destination: `${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,
+    }
+
+    const redirects = [internetExplorerRedirect, ...dynamicRedirects, nonWWWRedirect]
 
     return redirects
   } catch (error) {
