@@ -74,12 +74,7 @@ module.exports = async () => {
         {
           type: 'header',
           key: 'host',
-          value: trimWWW(process.env.NEXT_PUBLIC_BASE_URL),
-        },
-        {
-          type: 'header',
-          key: 'host',
-          value: trimHTTP(trimWWW(process.env.NEXT_PUBLIC_BASE_URL)),
+          value: /(?:https?://)?([^s.]+.[^s.]+)(?:/|?|$)?/,
         },
       ],
       permanent: true,
@@ -97,6 +92,3 @@ module.exports = async () => {
     return []
   }
 }
-
-const trimWWW = url => url.replace(/\/www\./, '/')
-const trimHTTP = url => url.replace(/https?:\/\//, '')
