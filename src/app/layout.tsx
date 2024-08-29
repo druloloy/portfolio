@@ -4,7 +4,7 @@ import { Space_Grotesk, Work_Sans } from 'next/font/google'
 
 import { AdminBar } from './_components/AdminBar'
 import { Footer } from './_components/Footer'
-import { GTMDataLayer } from './_components/GoogleAnalytics'
+import { GTMDataLayer, NoScript } from './_components/GoogleAnalytics'
 import { Header } from './_components/Header'
 import { ScrollUp } from './_components/ScrollUp'
 import { Providers } from './_providers'
@@ -40,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={[workSans.variable, spaceGrotesk.variable].join(' ')}>
+        <NoScript gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
         <Providers>
           <AdminBar />
           {/* @ts-expect-error */}
