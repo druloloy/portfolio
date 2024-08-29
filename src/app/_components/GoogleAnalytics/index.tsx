@@ -1,9 +1,7 @@
 import React from 'react'
-import { headers } from 'next/headers'
 import Script from 'next/script'
 
 export const GTMDataLayer: React.FC<{ gtmId: string }> = ({ gtmId }) => {
-  const nonce = headers().get('x-nonce')
   return (
     <Script
       id="gtm"
@@ -22,7 +20,6 @@ export const GTMDataLayer: React.FC<{ gtmId: string }> = ({ gtmId }) => {
 }
 
 export const NoScript: React.FC<{ gtmId: string }> = ({ gtmId }) => {
-  const nonce = headers().get('x-nonce')
   return (
     <noscript
       dangerouslySetInnerHTML={{
