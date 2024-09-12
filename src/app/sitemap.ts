@@ -6,7 +6,7 @@ const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // skip in development
-  if (!process.env.IS_LIVE) {
+  if (!process.env.NEXT_PUBLIC_IS_LIVE) {
     return []
   }
 
