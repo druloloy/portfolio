@@ -2,6 +2,8 @@ import React from 'react'
 import Script from 'next/script'
 
 export const GTMDataLayer: React.FC<{ gtmId: string }> = ({ gtmId }) => {
+  if (!gtmId) return null
+
   return (
     <Script
       id="gtm"
@@ -20,6 +22,8 @@ export const GTMDataLayer: React.FC<{ gtmId: string }> = ({ gtmId }) => {
 }
 
 export const NoScript: React.FC<{ gtmId: string }> = ({ gtmId }) => {
+  if (!gtmId) return null
+
   return (
     <noscript
       dangerouslySetInnerHTML={{
