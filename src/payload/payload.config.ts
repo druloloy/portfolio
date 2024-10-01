@@ -90,8 +90,12 @@ export default buildConfig({
   graphQL: {
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
-  cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
-  csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
+  cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || '', process.env.RAILWAY_SERVER || ''].filter(
+    Boolean,
+  ),
+  csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || '', process.env.RAILWAY_SERVER || ''].filter(
+    Boolean,
+  ),
   endpoints: [
     // The seed endpoint is used to populate the database with some example data
     // You should delete this endpoint before deploying your site to production
