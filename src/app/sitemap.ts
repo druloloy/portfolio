@@ -5,19 +5,17 @@ import type { Page, Project } from '../payload/payload-types'
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // skip in development
+  // skip in development/staging
   if (!process.env.NEXT_PUBLIC_IS_LIVE) {
     return []
   }
+  const fetchPageURL = `${serverURL}/api/pages?limit=0`
+  const fetchProjectsURL = `${serverURL}/api/projects?limit=0`
 
-  const { docs: pages }: { docs: Page[] } = await fetch(`${serverURL}/api/pages?limit=0`).then(
-    res => {
-      return res.json()
-    },
-  )
-  const { docs: projects }: { docs: Project[] } = await fetch(
-    `${serverURL}/api/projects?limit=0`,
-  ).then(res => {
+  const { docs: pages }: { docs: Page[] } = await fetch(fetchPageURL).then(res => {
+    return res.json()
+  })
+  const { docs: projects }: { docs: Project[] } = await fetch(fetchProjectsURL).then(res => {
     return res.json()
   })
 
@@ -43,5 +41,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return siteMap
 }
-
-// export const dynamic = 'force-dynamic'
