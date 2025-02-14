@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "portfolio",
+            "script": "yarn",
+            "args": "run serve"
+        }
+    ]
+}
