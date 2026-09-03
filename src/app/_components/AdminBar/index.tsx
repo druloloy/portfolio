@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar, PayloadAdminBarProps } from 'payload-admin-bar'
 
-import { useAuth } from '../../_providers/Auth'
+import { useAdminUser } from '../../_providers/AdminUser'
 import { Gutter } from '../Gutter'
 
 import classes from './index.module.scss'
@@ -34,7 +34,7 @@ export const AdminBar: React.FC<{
   const collection = collectionLabels?.[segments?.[1]] ? segments?.[1] : 'pages'
   const [show, setShow] = React.useState(false)
 
-  const { user } = useAuth()
+  const { user } = useAdminUser()
 
   useEffect(() => {
     if (user) {
