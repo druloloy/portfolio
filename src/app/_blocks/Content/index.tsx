@@ -20,22 +20,29 @@ export const ContentBlock: React.FC<
   const blockName = props.blockName
 
   React.useEffect(() => {
+    // NOTE: this animation is bound to the CMS-authored block name "work_exp".
+    // Renaming that block in the admin panel silently disables the animation.
+    // Phase 3 should replace this with an explicit CMS toggle field.
     if (blockName !== 'work_exp') {
       return
     }
 
     const twistObserver = (direction: 'left' | 'right') => {
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add(
-              classes[`twist${direction.charAt(0).toUpperCase()}${direction.slice(1)}`],
-            )
-          }
-        })
-      })
+      const className = classes[`twist${direction.charAt(0).toUpperCase()}${direction.slice(1)}`]
 
-      return observer
+      return new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+              return
+            }
+
+            entry.target.classList.add(className)
+            observer.unobserve(entry.target)
+          })
+        },
+        { threshold: 0.25 },
+      )
     }
 
     const twistLeftObserver = twistObserver('left')
