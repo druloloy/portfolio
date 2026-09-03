@@ -120,9 +120,6 @@
   &:hover > *{
     animation-play-state: paused;
   }
-  &:hover {
-    opacity: 1;
-  }
 }
 
 .technologies {
@@ -133,9 +130,8 @@
   display: inherit;
   user-select: none;
   animation: scroll 20s linear infinite;
-  background-color: black;
-  mix-blend-mode: difference;
-  color: var(--color-primary);
+  background-color: var(--theme-color-secondary);
+  color: var(--theme-color-primary);
 
 
 
