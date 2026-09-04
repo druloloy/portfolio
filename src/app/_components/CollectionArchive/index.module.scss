@@ -96,3 +96,18 @@
     margin-top: var(--base);
   }
 }
+
+// Reduced motion gets no pin and no sweep, so the track must be reachable by
+// ordinary means: a plain horizontally-scrollable row. Without this the cards
+// past the viewport edge would be unreachable for exactly the visitors who
+// asked for less motion.
+@media (prefers-reduced-motion: reduce) {
+  .collectionArchive {
+    overflow-x: auto;
+  }
+
+  .grid {
+    transform: none !important;
+    width: max-content;
+  }
+}
