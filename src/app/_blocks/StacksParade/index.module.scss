@@ -24,7 +24,10 @@
   background-color: var(--theme-color-primary);
   border-top: 2px solid var(--theme-color-secondary);
   box-shadow: 0 -6px 0 0 var(--theme-color-secondary);
-  margin-top: calc(var(--base) * -4);
+  // -192px = 96px to cancel the preceding VerticalPadding's bottom padding,
+  // plus 96px of genuine overlap on top of the section above. Measured: at
+  // -96px the card sat exactly flush and covered nothing.
+  margin-top: calc(var(--base) * -8);
 
   h2 {
     text-transform: uppercase;
