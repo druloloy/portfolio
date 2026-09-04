@@ -3,13 +3,15 @@ import React, { Fragment } from 'react'
 import { usePathname } from 'next/navigation'
 import AOS from 'aos'
 
+import { prefersReducedMotion } from '../../_utilities/prefersReducedMotion'
+
 import 'aos/dist/aos.css'
 
 const AOSWrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
 
   React.useEffect(() => {
-    AOS.init({ once: true })
+    AOS.init({ once: true, disable: prefersReducedMotion })
   }, [])
 
   React.useEffect(() => {

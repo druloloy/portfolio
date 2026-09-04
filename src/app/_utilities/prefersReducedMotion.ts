@@ -1,0 +1,13 @@
+/**
+ * Whether the visitor has asked the OS to reduce motion.
+ *
+ * Returns false when `matchMedia` is unavailable (SSR, older browsers) so
+ * callers can treat it as a plain predicate without guarding every call.
+ */
+export const prefersReducedMotion = (): boolean => {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return false
+  }
+
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
