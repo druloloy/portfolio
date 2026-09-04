@@ -49,6 +49,18 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // run on competing frames.
     lenis.on('scroll', ScrollTrigger.update)
 
+    // ScrollTrigger pins inject spacer elements that grow the document long
+    // after Lenis measured it. Lenis caches its scroll limit, so without this
+    // it keeps the stale one and simply refuses to scroll past it — the page
+    // appears to stop partway down. This is the third required piece of the
+    // Lenis/ScrollTrigger integration, alongside the scroll listener above and
+    // the ticker below.
+    const onRefresh = (): void => {
+      lenis.resize()
+    }
+
+    ScrollTrigger.addEventListener('refresh', onRefresh)
+
     const onTick = (time: number): void => {
       lenis.raf(time * 1000)
     }
@@ -56,7 +68,12 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     gsap.ticker.add(onTick)
     gsap.ticker.lagSmoothing(0)
 
+    // Measure once after mount, so any layout that settled during hydration is
+    // accounted for before the visitor scrolls.
+    ScrollTrigger.refresh()
+
     return () => {
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
       gsap.ticker.remove(onTick)
       lenis.destroy()
       lenisRef.current = null
