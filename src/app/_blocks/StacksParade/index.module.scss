@@ -16,6 +16,16 @@
   display: flex;
   flex-direction: column;
 
+  // Rises over the section above it like a card. The opaque background does
+  // the occluding; the hard top border and upward offset shadow are what read
+  // as the card's leading edge. z-index lifts it above the previous block,
+  // which is statically positioned.
+  z-index: 2;
+  background-color: var(--theme-color-primary);
+  border-top: 2px solid var(--theme-color-secondary);
+  box-shadow: 0 -6px 0 0 var(--theme-color-secondary);
+  margin-top: calc(var(--base) * -4);
+
   h2 {
     text-transform: uppercase;
     font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
