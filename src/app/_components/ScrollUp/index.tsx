@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 
+import { useSmoothScroll } from '../../_providers/SmoothScroll'
 import Icon from '../Icon'
 
 import classes from './index.module.scss'
@@ -8,6 +9,7 @@ import classes from './index.module.scss'
 export const ScrollUp = () => {
   const [visible, setVisible] = React.useState(false)
   const thresholdValue = 1000
+  const { scrollTo } = useSmoothScroll()
   React.useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > thresholdValue) {
@@ -23,7 +25,9 @@ export const ScrollUp = () => {
   }, [thresholdValue])
 
   const onClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Routes through Lenis when it is active; the context falls back to a
+    // native smooth scroll when it is not (reduced motion), so no branch here.
+    scrollTo(0)
   }
 
   return (
