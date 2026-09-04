@@ -16,7 +16,8 @@ const AOSWrapper = ({ children }: { children: React.ReactNode }) => {
     // A route change swaps the DOM beneath AOS, whose element positions are
     // cached at init. Without a hard refresh the new nodes are never measured,
     // and because every usage sets `data-aos-once` they stay at opacity: 0
-    // permanently. rAF defers the refresh until after the new tree is painted.
+    // permanently. rAF defers the refresh to just before the next paint, once
+    // layout has settled.
     const frame = requestAnimationFrame(() => {
       AOS.refreshHard()
     })

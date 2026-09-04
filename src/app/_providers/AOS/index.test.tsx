@@ -24,10 +24,10 @@ vi.mock('aos/dist/aos.css', () => ({}))
 beforeEach(() => {
   vi.clearAllMocks()
   // rAF is what defers refreshHard until after paint; run it synchronously.
-  vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+  vi.stubGlobal('requestAnimationFrame', vi.fn((cb: FrameRequestCallback) => {
     cb(0)
     return 1
-  })
+  }))
   vi.stubGlobal('cancelAnimationFrame', vi.fn())
 })
 
@@ -53,6 +53,7 @@ describe('AOSWrapper', () => {
     rerender(<AOSWrapper><div>content</div></AOSWrapper>)
 
     expect(mockRefreshHard).toHaveBeenCalled()
+    expect(global.requestAnimationFrame).toHaveBeenCalled()
   })
 
   it('does not re-initialize AOS on navigation', () => {
@@ -63,5 +64,23 @@ describe('AOSWrapper', () => {
     rerender(<AOSWrapper><div>content</div></AOSWrapper>)
 
     expect(mockInit).toHaveBeenCalledTimes(1)
+  })
+
+  it('cancels a pending refresh frame when the pathname changes again', () => {
+    mockPathname.mockReturnValue('/')
+    const { rerender, unmount } = render(<AOSWrapper><div>content</div></AOSWrapper>)
+
+    mockPathname.mockReturnValue('/posts/first')
+    rerender(<AOSWrapper><div>content</div></AOSWrapper>)
+
+    mockPathname.mockReturnValue('/posts/second')
+    rerender(<AOSWrapper><div>content</div></AOSWrapper>)
+
+    // Each pathname change schedules a frame and must cancel the previous one,
+    // so a rapid navigation cannot leave a stale refresh queued against a DOM
+    // that has already been replaced again.
+    expect(global.cancelAnimationFrame).toHaveBeenCalled()
+
+    unmount()
   })
 })
