@@ -65,7 +65,7 @@ Taken from the running site at 1440x900:
   `npx tsc --noEmit -p tsconfig.json`, `yarn lint` — all exit 0.
 - Conventional commits, **no attribution trailer**.
 - Windows: `yarn` only resolves in PowerShell; never read an exit code after a pipe.
-- Dev server is **`yarn dev:local`**, never `yarn dev`.
+- Dev server is **`yarn dev`** (it applies the localhost URL overrides). `yarn dev:raw` is the unoverridden original and will 404 every route locally.
 - Brand values stay frozen: no colour, type, border or shadow changes.
 
 ---

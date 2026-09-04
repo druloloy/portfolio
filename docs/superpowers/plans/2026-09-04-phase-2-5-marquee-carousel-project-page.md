@@ -30,7 +30,7 @@ Same as the predecessor plan, restated because they still bind:
 - **Every task ends green:** `yarn test`, `npx tsc --noEmit -p tsconfig.json`, `yarn lint` — all exit 0.
 - **Conventional commits, no attribution trailer.**
 - **Environment is Windows.** `yarn` resolves only in PowerShell, not Git Bash. Never read an exit code after a pipe; use `$LASTEXITCODE` on its own line.
-- Run the dev server with **`yarn dev:local`** — plain `yarn dev` points the app at production URLs and 404s every route.
+- Run the dev server with **`yarn dev`** (now applies localhost overrides). `yarn dev:raw` is the original and 404s locally.
 
 **Brand values are NO LONGER frozen for tasks 19-20** — those tasks exist to apply the
 brand language. They are still frozen for tasks 17 and 18, which are bug fixes. The

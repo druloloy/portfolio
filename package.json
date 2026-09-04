@@ -5,8 +5,8 @@
   "main": "dist/server.js",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts nodemon",
-    "dev:local": "node scripts/dev-local.js",
+    "dev": "node scripts/dev-local.js",
+    "dev:raw": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts nodemon",
     "seed": "rm -rf media && cross-env PAYLOAD_SEED=true PAYLOAD_DROP_DATABASE=true PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/server.ts",
     "init_key:dev": "node init_key.js -d ./keystore/keyfile.development.json.enc",
     "init_key:prod": "node init_key.js -d ./keystore/keyfile.production.json.enc",

@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 /**
- * Local development entrypoint — `yarn dev:local`.
+ * Local development entrypoint — `yarn dev`.
  *
  * Why this exists:
  *
@@ -20,7 +20,7 @@
  * `.env` itself is never read for anything else and never modified.
  *
  * Note: this still uses whatever DATABASE_URI `.env` specifies. If that points
- * at production, `yarn dev` and `yarn dev:local` will both run a Drizzle schema
+ * at production, this will run a Drizzle schema
  * push against production on boot. Use a local or staging database.
  */
 
@@ -37,11 +37,11 @@ dotenv.config({ path: path.resolve(projectRoot, '.env') })
 const port = process.env.PORT || 3000
 const origin = `http://localhost:${port}`
 
-console.log(`[dev:local] public URLs -> ${origin}  (.env unchanged)`)
+console.log(`[dev] public URLs -> ${origin}  (.env unchanged)`)
 
 if (process.env.DATABASE_URI && !/localhost|127\.0\.0\.1/.test(process.env.DATABASE_URI)) {
-  console.log('[dev:local] WARNING: DATABASE_URI is not local. Payload will run a schema')
-  console.log('[dev:local]          push against that database on boot.')
+  console.log('[dev] WARNING: DATABASE_URI is not local. Payload will run a schema')
+  console.log('[dev]          push against that database on boot.')
 }
 
 const child = spawn(
@@ -61,6 +61,6 @@ const child = spawn(
 
 child.on('exit', code => process.exit(code === null ? 1 : code))
 child.on('error', err => {
-  console.error('[dev:local] failed to start nodemon:', err.message)
+  console.error('[dev] failed to start nodemon:', err.message)
   process.exit(1)
 })
