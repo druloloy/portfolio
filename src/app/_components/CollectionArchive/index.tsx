@@ -183,18 +183,24 @@ export const CollectionArchive: React.FC<Props> = props => {
       const track = el.querySelector<HTMLElement>(`.${classes.grid}`)
       if (!track) return
 
-      const maxShift = Math.max(track.scrollWidth - el.clientWidth, 0)
-      if (maxShift === 0) {
-        track.style.transform = 'translateX(0px)'
-        return
-      }
+      const windowWidth = el.clientWidth
+      const trackWidth = track.scrollWidth
+      if (windowWidth === 0 || trackWidth === 0) return
 
       const rect = el.getBoundingClientRect()
       const travel = rect.height + window.innerHeight
       const raw = (window.innerHeight - rect.top) / travel
       const progress = Number.isFinite(raw) ? Math.min(Math.max(raw, 0), 1) : 0
 
-      track.style.transform = `translateX(${-(progress * maxShift)}px)`
+      // Sweep the track across the window rather than panning within an
+      // overflow: at progress 0 the cards sit just past the right edge, and at
+      // progress 1 they have travelled fully past the left edge. Scrolling back
+      // up runs it in reverse, because progress is a pure function of position.
+      const startX = windowWidth
+      const endX = -trackWidth
+      const x = startX + progress * (endX - startX)
+
+      track.style.transform = `translateX(${x}px)`
     }
 
     const onScroll = (): void => {

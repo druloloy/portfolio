@@ -55,16 +55,15 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  // Wider than the clipping container on purpose: the overflow IS the pan
-  // distance for the scroll-carousel. The container clips it, so the cards
-  // cannot spill over the section heading.
-  width: 150%;
-  transition: transform 200ms linear;
+  // Width follows the cards. The sweep distance is computed in index.tsx from
+  // this track's own width, so a percentage width here would only add empty
+  // space and pack the cards against one edge.
+  width: max-content;
 
   // display: grid;
   // grid-template-columns: repeat(4, 1fr);
   // width: 100%;
-  gap: var(--base) 0px;
+  gap: var(--base) var(--base);
 
   // @include mid-break {
   //   grid-template-columns: repeat(6, 1fr);
@@ -77,7 +76,7 @@
 }
 
 .column {
-  flex: 1;
+  flex: 0 0 400px;
   max-width: 400px;
   height: auto;
   transition: width 500ms ease-in-out;
@@ -86,6 +85,7 @@
 
   @include mid-break {
     max-width: 300px;
+    flex-basis: 300px;
   }
 }
 
