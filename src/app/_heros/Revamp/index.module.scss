@@ -115,6 +115,13 @@
   display: block;
   transition: 0.3s ease-in-out;
 
+  // Full-bleed: `.content`'s left edge sits exactly on `.hero`'s gutter, so pulling
+  // left by one gutter lands this at viewport x = 0. `.hero` has `overflow: hidden`
+  // and a border box of exactly the viewport, so the scrollbar overhang from `100vw`
+  // is clipped rather than producing a horizontal scrollbar.
+  width: 100vw;
+  margin-left: calc(var(--gutter-h) * -1);
+
   &:hover .track {
     animation-play-state: paused;
   }

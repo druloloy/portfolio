@@ -153,7 +153,12 @@ export const RevampHero: React.FC<Page['hero']> = ({ richText, media, links, ico
       <div className={classes.content}>
         <div className={classes.techOverlay}>
           <div className={classes.track}>
-            {Array.from({ length: 2 }).map((_, i) => (
+            {/* Copy count is coupled to the `scroll` keyframe's -50% in index.module.scss:
+                the translate must equal a whole number of copies, and -50% of N copies is
+                N/2 copies — so N must stay EVEN. 4 copies means the loop translates by two
+                copies, so the band stays gapless as long as 2 copies span the viewport.
+                Changing this number without changing that keyframe reintroduces the gap. */}
+            {Array.from({ length: 4 }).map((_, i) => (
               <TechnologyList
                 technologies={technologies}
                 className={classes.technologies}
