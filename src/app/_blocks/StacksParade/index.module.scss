@@ -24,10 +24,10 @@
   background-color: var(--theme-color-primary);
   border-top: 2px solid var(--theme-color-secondary);
   box-shadow: 0 -6px 0 0 var(--theme-color-secondary);
-  // -192px = 96px to cancel the preceding VerticalPadding's bottom padding,
-  // plus 96px of genuine overlap on top of the section above. Measured: at
-  // -96px the card sat exactly flush and covered nothing.
-  margin-top: calc(var(--base) * -8);
+  // No negative margin: the projects section above is pinned by ScrollTrigger,
+  // and pulling this block up put it 96px inside the pin's reserved scroll
+  // range, so it fought the pin instead of following it. The pin now provides
+  // the handoff; the hard top edge below is what still reads as a card.
 
   h2 {
     text-transform: uppercase;

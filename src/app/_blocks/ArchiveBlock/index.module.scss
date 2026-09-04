@@ -17,7 +17,11 @@
 }
 
 .projects {
-  height: auto;
+  // Exactly one viewport tall. ScrollTrigger pins this section, so anything
+  // beyond the viewport height is simply unreachable — the heading plus a
+  // 100vh card track made it 1156px against a 900px viewport and cut the
+  // cards off at the bottom.
+  height: 100vh;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -50,6 +54,11 @@
   // carousel's pan distance to zero.
   > div:nth-of-type(2){
     width: 100%;
+    // Fill whatever vertical space the heading leaves. `min-height: 0` lets a
+    // flex child shrink below its content height, without which the track
+    // would push the section taller than the viewport again.
+    flex: 1;
+    min-height: 0;
     gap: 8px;
 
     @media screen {

@@ -12,6 +12,7 @@
 
 .collectionArchive {
   width: 100%;
+  height: 100%;
   overflow: hidden;
   // The horizontal offset is owned entirely by the scroll effect in
   // index.tsx, and it is applied to the .grid track — never to this
@@ -51,10 +52,14 @@
 
 .grid {
   position: relative;
-  height: 100vh;
+  // 100% of the space the heading leaves, not 100vh — the section is pinned,
+  // so a full viewport here plus the heading overflows and clips the cards.
+  // `stretch` makes every card the same height; with `center` each one sized
+  // to its own content and they came out uneven (405 / 384 / 384).
+  height: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   // Width follows the cards. The sweep distance is computed in index.tsx from
   // this track's own width, so a percentage width here would only add empty
   // space and pack the cards against one edge.
