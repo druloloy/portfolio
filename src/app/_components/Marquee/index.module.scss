@@ -1,45 +1,52 @@
-.marquee {  
+.marquee {
     --scroll-speed: 15s;
     --gap: calc(4vw);
     width: 100%;
     overflow: hidden;
     padding: 1rem 0;
+    user-select: none;
+}
+
+.track {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
     flex-wrap: nowrap;
-    gap: var(--gap);
-    user-select: none;
-
-    @media screen and (min-width: 768px) {
-        gap: var(--gap);
-    }
-}
-
-.marquee__items {
-    // width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    gap: var(--gap);
+    // Sized by its content so the percentage translate below is exact.
+    width: max-content;
 
     animation-name: slide;
     animation-duration: var(--scroll-speed);
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-
-    @media screen and (min-width: 768px) {
-        gap: var(--gap);
-    }
 }
 
-.marquee__items.reverse{
+.track.reverse {
     animation-direction: reverse;
 }
 
+.marquee__items {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex: 0 0 auto;
+    gap: var(--gap);
+    // The spacing between copies lives INSIDE each copy, not as a `gap` on the
+    // track. That makes the track exactly 5 x (copy + gap), so translating
+    // -40% below is exactly two copies. A gap on the track would make the
+    // track 5C + 4G and the loop would drift a little every cycle.
+    padding-right: var(--gap);
+}
+
 @keyframes slide {
+    from {
+        transform: translateX(0);
+    }
     to {
-        transform: translateX(calc(-100% - var(--gap)));
+        // Exactly two of the five copies. The count and this percentage are
+        // coupled: -100%/5 is one copy, so N copies is -(N * 20)%. Changing
+        // the copy count in index.tsx without changing this reintroduces the
+        // gap this fix removes.
+        transform: translateX(-40%);
     }
 }

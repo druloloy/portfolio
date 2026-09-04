@@ -8,15 +8,13 @@ const Marquee: React.FC<{ children: React.ReactNode; reverse?: boolean }> = ({
 }) => {
   return (
     <section className={classes.marquee}>
-      {Array.from({ length: 5 }).map((item, index) => (
-        <section
-          key={index}
-          aria-hidden={index > 0}
-          className={[classes.marquee__items, reverse ? classes.reverse : ''].join(' ')}
-        >
-          {children}
-        </section>
-      ))}
+      <div className={[classes.track, reverse ? classes.reverse : ''].filter(Boolean).join(' ')}>
+        {Array.from({ length: 5 }).map((item, index) => (
+          <section key={index} aria-hidden={index > 0} className={classes.marquee__items}>
+            {children}
+          </section>
+        ))}
+      </div>
     </section>
   )
 }
