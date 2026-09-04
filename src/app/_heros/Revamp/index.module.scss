@@ -110,16 +110,20 @@
   position: relative;
   padding: 0.33rem;
   width: 100%;
-  // overflow-x: hidden;
-  // opacity: 0.3;
-  display: inline-block;
-  white-space: nowrap;
-  gap: 1rem;
+  // Required: without this the track is not clipped and the copies spill out.
+  overflow: hidden;
+  display: block;
   transition: 0.3s ease-in-out;
-  
-  &:hover > *{
+
+  &:hover .track {
     animation-play-state: paused;
   }
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: scroll 20s linear infinite;
 }
 
 .technologies {
@@ -127,31 +131,29 @@
   margin: 0;
   font: 100 max(16px, 1vw) / max(24px, 2vw) var(--font-work-sans);
   list-style: none;
-  display: inherit;
+  display: flex;
+  flex: 0 0 auto;
+  white-space: nowrap;
   user-select: none;
-  animation: scroll 20s linear infinite;
-  background-color: var(--theme-color-secondary);
   color: var(--theme-color-primary);
 
-
-
   li {
-    display: inherit;
+    display: inline-flex;
     margin-right: 1rem;
-    
   }
 
   li:not(li:empty)::before {
     content: '•';
     margin-right: 1rem;
   }
-} 
+}
 
 @keyframes scroll {
   from {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   to {
-    transform: translateX(-100%);
+    // Exactly one copy's width, because the track holds two identical copies.
+    transform: translateX(-50%);
   }
 }

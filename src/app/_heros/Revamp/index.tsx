@@ -152,14 +152,16 @@ export const RevampHero: React.FC<Page['hero']> = ({ richText, media, links, ico
       </div>
       <div className={classes.content}>
         <div className={classes.techOverlay}>
-          {Array.from({ length: 2 }).map((_, i) => (
-            <TechnologyList
-              technologies={technologies}
-              className={classes.technologies}
-              ariaHidden={i !== 0}
-              key={i}
-            />
-          ))}
+          <div className={classes.track}>
+            {Array.from({ length: 2 }).map((_, i) => (
+              <TechnologyList
+                technologies={technologies}
+                className={classes.technologies}
+                ariaHidden={i !== 0}
+                key={i}
+              />
+            ))}
+          </div>
         </div>
         <RichText content={richText} />
         {Array.isArray(links) && links.length > 0 && (
