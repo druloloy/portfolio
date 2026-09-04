@@ -192,7 +192,7 @@ export const CollectionArchive: React.FC<Props> = props => {
       const rect = el.getBoundingClientRect()
       const travel = rect.height + window.innerHeight
       const raw = (window.innerHeight - rect.top) / travel
-      const progress = Math.min(Math.max(raw, 0), 1)
+      const progress = Number.isFinite(raw) ? Math.min(Math.max(raw, 0), 1) : 0
 
       track.style.transform = `translateX(${-(progress * maxShift)}px)`
     }
