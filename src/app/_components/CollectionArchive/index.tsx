@@ -175,6 +175,8 @@ export const CollectionArchive: React.FC<Props> = props => {
     const el = archiveRef.current
     if (!el) return undefined
 
+    el.style.transform = ''
+
     let frame = 0
 
     const update = (): void => {
@@ -183,7 +185,7 @@ export const CollectionArchive: React.FC<Props> = props => {
 
       const maxShift = Math.max(track.scrollWidth - el.clientWidth, 0)
       if (maxShift === 0) {
-        el.style.transform = 'translateX(0px)'
+        track.style.transform = 'translateX(0px)'
         return
       }
 
@@ -192,7 +194,7 @@ export const CollectionArchive: React.FC<Props> = props => {
       const raw = (window.innerHeight - rect.top) / travel
       const progress = Math.min(Math.max(raw, 0), 1)
 
-      el.style.transform = `translateX(${-(progress * maxShift)}px)`
+      track.style.transform = `translateX(${-(progress * maxShift)}px)`
     }
 
     const onScroll = (): void => {
