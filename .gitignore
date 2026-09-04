@@ -7,3 +7,5 @@ node_modules
 .next
 .vercel
 keystore/keyfile.*.json
+# TypeScript incremental build cache
+*.tsbuildinfo

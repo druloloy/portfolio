@@ -38,9 +38,9 @@ These apply to every task in this plan.
 
 ## Verification Strategy — read before Task 1
 
-This project has **zero tests and no test runner** (finding O2). The approved roadmap explicitly defers the test strategy rather than scheduling it, so **this plan does not introduce a test framework**, and consequently does not follow a red-green TDD cycle. That is a deliberate deviation from the default workflow, made to respect the approved scope.
+This project began with **zero tests and no test runner** (finding O2). The approved roadmap deferred the test strategy rather than scheduling it, so this plan was originally written without one — see the Resolved note below, which supersedes that decision. Vitest is now installed by Task 0, and three tasks follow a real red-green cycle against it.
 
-What replaces it, per task:
+Everything else is verified by the gates below rather than by assertion, because a CSS keyframe and an `IntersectionObserver` threshold are not meaningfully unit-testable:
 
 1. `npx tsc --noEmit -p tsconfig.json` — exits 0 today; a non-zero exit is a regression.
 2. `yarn lint` — ESLint is configured.
@@ -317,10 +317,19 @@ git rm src/app/_utilities/getMeUser.ts src/app/_api/getMe.ts
 - [ ] **Step 3: Confirm nothing references the deleted routes**
 
 ```bash
-grep -rn "getMeUser\|_api/getMe\|/recover-password\|/reset-password\|href=\"/login\"\|href=\"/account\"" src --include=*.ts --include=*.tsx
+grep -rn "getMeUser\|_api/getMe\|href=\"/recover-password\|href=\"/reset-password\|href=\"/login\"\|href=\"/account\"" src --include=*.ts --include=*.tsx
 ```
 
 Expected: no output. The `/login` link inside `logout/LogoutPage` is deleted along with its directory.
+
+> **Corrected 2026-09-03 during execution (Ruling R12).** The original pattern used
+> bare `/recover-password` and `/reset-password`, which matched unanchored substrings
+> and produced two false positives: a commented-out JSX line in `Header/Nav`, and the
+> Payload REST endpoint URL `/api/users/reset-password` inside the Auth provider —
+> neither of them live front-end auth code. The pattern above anchors on `href="` so
+> it matches navigation targets rather than any occurrence of the words. If this gate
+> still returns the `Header/Nav` commented line, that comment is cleaned up in
+> Task 4+5, which rewrites that file.
 
 - [ ] **Step 4: Verify**
 
@@ -504,7 +513,30 @@ Removes the last two `useAuth` consumers and the synthesized comments block on t
 - Delete: `src/app/_components/PremiumContent/` (whole directory)
 - Delete: `src/app/_blocks/Comments/` (whole directory)
 - Delete: `src/app/_api/fetchComments.ts`
+- Delete: `src/app/_graphql/me.ts` *(added during execution — orphaned by Task 3)*
 - Modify: `src/app/(pages)/posts/[slug]/page.tsx`
+- Modify: `src/app/_components/Blocks/index.tsx` *(added during execution — Ruling R13)*
+- Modify: `src/app/_graphql/posts.ts` *(added during execution — Ruling R14)*
+
+> **Two file-list defects corrected 2026-09-03 during execution.**
+>
+> **R13 —** `src/app/_components/Blocks/index.tsx` is the block-renderer registry and
+> imports `CommentsBlock` + `CommentsBlockProps` from the directory this task deletes.
+> The original file list missed it, so `tsc` failed and the implementer correctly
+> escalated. Remove the import, the `comments:` entry in `blockComponents`, and
+> `CommentsBlockProps` from the `blocks` prop union. A secondary
+> `Unused '@ts-expect-error'` error at line 73 is an artifact of the unresolvable
+> import — re-evaluate it only after fixing the import.
+>
+> **R14 —** `src/app/_graphql/posts.ts` still requested `enablePremiumContent` and
+> exported an orphaned `POST_PREMIUM_CONTENT` query (zero consumers after
+> `PremiumContent` is deleted). This is front-end scope and belongs here, not in
+> Track B. Critically, **Task 15 below never mentioned this file** — leaving it would
+> mean that once Task 15 drops those fields from the Posts schema, this query requests
+> non-existent fields and GraphQL errors at runtime. Removing `POST_PREMIUM_CONTENT`
+> also orphans the `STACK_PARADE_BLOCK` import specifier in this file (it is used only
+> inside that query here; `pages.ts` still uses it legitimately), so that specifier
+> must come out of the import line too.
 
 **Interfaces:**
 - Consumes: the `useAdminUser` hook from Task 4 (indirectly — this task removes the last competing consumer)
@@ -631,7 +663,9 @@ Two defects in the same block. The hover rule targets a base `opacity` that is c
 
 - [ ] **Step 1: Delete the no-op hover**
 
-In the `.technology_wrapper` rule, remove:
+In the ticker container rule, remove:
+
+> **Corrected during execution:** the plan originally named this block `.technology_wrapper`; the file actually defines it as `.techOverlay`. Locate it by content — it is the rule containing `&:hover > * { animation-play-state: paused; }`.
 
 ```scss
   &:hover {
@@ -1418,6 +1452,15 @@ In `src/payload/payload.config.ts`, delete the `import Comments from './collecti
 ```bash
 yarn generate:types
 ```
+
+> **Prerequisite added during execution (Ruling R14):** confirm that
+> `src/app/_graphql/posts.ts` no longer references `enablePremiumContent` or
+> `premiumContent` before running this task. Track A removed them. If they are
+> somehow still present, dropping the schema columns below will make that query
+> request non-existent fields, and GraphQL will error at runtime rather than
+> degrade quietly. Verify with:
+> `grep -rn "enablePremiumContent\|premiumContent" src/app/`
+> Expected: no output.
 
 - [ ] **Step 5: Generate and inspect the migration**
 

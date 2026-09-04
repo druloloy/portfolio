@@ -68,6 +68,7 @@ Severity: **P0** breaks the site for real visitors · **P1** visible defect or m
 | C4 | P1 | Missing `return` on the preview auth guard — `new Response(...)` is constructed and discarded, execution falls through. | `next/preview/route.ts:27` |
 | C5 | P1 | `generateStaticParams` returns an array of strings where Next expects `{ slug }` objects. Present in all three dynamic routes. | `[slug]`, `posts/[slug]`, `projects/[slug]` |
 | C6 | P1 | `sitemap.ts` fetches `http://localhost:${process.env.PORT}` — resolves to `localhost:undefined` when `PORT` is unset. | `app/sitemap.ts:5` |
+| C9 | P1 | **A Project block placed on a Page renders empty.** `_graphql/pages.ts` omits `PROJECT_BLOCK` from its `layout` selection, while `collections/Pages/index.ts:69` does allow `ProjectBlock` — so the query returns the block with a `blockType` but none of its fields. Verified by cross-referencing all three collections' block lists against all three queries: Posts and Projects are correct; only Pages has the gap. Also in both `pages.ts` and `posts.ts`, `${CONTENT}` is spread twice in the same selection — harmless, since GraphQL merges identical spreads, but sloppy. Found during Phase 1 execution on 2026-09-03; pre-existing, not introduced by that work. | `_graphql/pages.ts` vs `collections/Pages/index.ts:69` |
 | C7 | P2 | Open redirect: `redirect(url)` on an unvalidated `searchParams` value. Gated behind a valid token and secret, so exploitation requires an authenticated editor — but the validation is free. | `next/preview/route.ts` |
 | C8 | P2 | `.env.example` still documents `DATABASE_URI=mongodb://...` while the project runs Postgres. | `.env.example:6` |
 
@@ -98,6 +99,7 @@ Severity: **P0** breaks the site for real visitors · **P1** visible defect or m
 
 | ID | Sev | Finding |
 |---|---|---|
+| O5 | P0 | **The repository cannot `yarn install` from its own committed lockfile.** `@payloadcms/db-postgres@0.8.9` hard-pins `drizzle-kit@0.23.2-df9e596`, a snapshot build that has since been unpublished from the registry — it 404s. A clean checkout is dead on arrival. Found during execution setup on 2026-09-03, not in the original audit pass. Fixed under Ruling R3 via a `resolutions` entry pinning the published `0.23.2`. |
 | O1 | P0 | **No Postgres migrations and no `migrate` script.** Production schema state is undefined and there is no rollback path. |
 | O2 | P1 | No tests of any kind — no runner configured, no test files. |
 | O3 | P2 | `@payloadcms/db-postgres` pinned as `^0.x`, an extremely loose pre-1.0 range, resolving to 0.8.9. |
