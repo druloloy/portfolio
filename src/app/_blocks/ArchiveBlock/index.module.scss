@@ -44,7 +44,11 @@
     font: 500 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
   }
 
-  div:nth-of-type(2){
+  // Child combinator is load-bearing: without it this also matches `.grid`
+  // (the 2nd div inside .collectionArchive, after .scrollRef), and at
+  // specificity (0,2,1) it overrides `.grid { width: 150% }` — collapsing the
+  // carousel's pan distance to zero.
+  > div:nth-of-type(2){
     width: 100%;
     gap: 8px;
 
