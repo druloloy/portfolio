@@ -37,6 +37,11 @@ export type Props = {
   sort?: string
 }
 
+// Fraction of the remaining distance the carousel closes each frame. Lower is
+// smoother and laggier; higher snaps closer to raw scroll. 1 would disable
+// smoothing entirely.
+const CAROUSEL_SMOOTHING = 0.12
+
 export const CollectionArchive: React.FC<Props> = props => {
   const {
     categories: catsFromProps,
@@ -178,34 +183,58 @@ export const CollectionArchive: React.FC<Props> = props => {
     el.style.transform = ''
 
     let frame = 0
+    let currentX: number | null = null
 
-    const update = (): void => {
-      const track = el.querySelector<HTMLElement>(`.${classes.grid}`)
-      if (!track) return
-
+    const targetFor = (track: HTMLElement): number | null => {
       const windowWidth = el.clientWidth
       const trackWidth = track.scrollWidth
-      if (windowWidth === 0 || trackWidth === 0) return
+      if (windowWidth === 0 || trackWidth === 0) return null
 
       const rect = el.getBoundingClientRect()
       const travel = rect.height + window.innerHeight
       const raw = (window.innerHeight - rect.top) / travel
       const progress = Number.isFinite(raw) ? Math.min(Math.max(raw, 0), 1) : 0
 
-      // Sweep the track across the window rather than panning within an
-      // overflow: at progress 0 the cards sit just past the right edge, and at
-      // progress 1 they have travelled fully past the left edge. Scrolling back
-      // up runs it in reverse, because progress is a pure function of position.
-      const startX = windowWidth
-      const endX = -trackWidth
-      const x = startX + progress * (endX - startX)
+      // Sweep across the window: cards sit past the right edge at progress 0
+      // and past the left edge at progress 1.
+      return windowWidth + progress * (-trackWidth - windowWidth)
+    }
 
-      track.style.transform = `translateX(${x}px)`
+    const render = (): void => {
+      const track = el.querySelector<HTMLElement>(`.${classes.grid}`)
+      if (!track) {
+        frame = 0
+        return
+      }
+
+      const target = targetFor(track)
+      if (target === null) {
+        frame = 0
+        return
+      }
+
+      // First paint snaps, so the strip does not slide in from a stale offset.
+      if (currentX === null) currentX = target
+
+      currentX += (target - currentX) * CAROUSEL_SMOOTHING
+
+      // Settled: pin exactly to target and stop burning frames.
+      if (Math.abs(target - currentX) < 0.5) {
+        currentX = target
+        track.style.transform = `translateX(${currentX}px)`
+        frame = 0
+        return
+      }
+
+      track.style.transform = `translateX(${currentX}px)`
+      frame = requestAnimationFrame(render)
     }
 
     const onScroll = (): void => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(update)
+      // The loop reschedules itself while it is still catching up; only start a
+      // new one when none is running. rAF ids are always positive, so 0 is a
+      // safe "not running" sentinel.
+      if (frame === 0) frame = requestAnimationFrame(render)
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
