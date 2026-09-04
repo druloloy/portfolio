@@ -11,10 +11,12 @@
 }
 
 .collectionArchive {
-  width: 150%;
-  transform: translateX(25%);
-  transition: transform 800ms ease-out;
-  scroll-behavior: smooth;
+  width: 100%;
+  overflow: hidden;
+  // The horizontal offset is owned entirely by the scroll effect in
+  // index.tsx. Do not set `transform` here — a CSS transform and an inline
+  // transform cannot coexist, and the JS one wins, silently dropping this.
+  transition: transform 200ms linear;
 }
 
 .introContent {

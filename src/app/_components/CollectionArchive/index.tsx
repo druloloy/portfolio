@@ -76,10 +76,6 @@ export const CollectionArchive: React.FC<Props> = props => {
   const [error, setError] = useState<string | undefined>(undefined)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [page, setPage] = useState(1)
-  const [halfElementWidth, setHalfElementWidth] = useState(0)
-  const [y, setY] = useState(0)
-  const [translateXValue, setTranslateXValue] = useState(halfElementWidth)
-  const [intersecting, setIntersecting] = useState(false)
 
   const categories = (catsFromProps || [])
     .map(cat => (typeof cat === 'object' ? cat.id : cat))
@@ -170,58 +166,50 @@ export const CollectionArchive: React.FC<Props> = props => {
     }
   }, [page, categories, relationTo, onResultChange, sort, limit, populateBy])
 
-  useEffect(() => {
-    setHalfElementWidth(window.innerWidth / 2)
-  }, [])
+  // Horizontal scroll-carousel.
+  //
+  // Maps vertical scroll position deterministically to a horizontal offset,
+  // rather than accumulating deltas — accumulation drifts, fights the CSS
+  // transform, and cannot recover from a resize or a jump-scroll.
+  React.useEffect(() => {
+    const el = archiveRef.current
+    if (!el) return undefined
 
-  const handleScroll = useCallback(
-    (e: Event) => {
-      const window = e.currentTarget as Window
+    let frame = 0
 
-      if (intersecting) {
-        const { current } = archiveRef
-        if (!current) return
-        const carouselWidth = current.children[1].getBoundingClientRect().width
-        const cardSize = current.children[1].children[0].getBoundingClientRect().width
-        const boundary = carouselWidth - cardSize
+    const update = (): void => {
+      const track = el.firstElementChild as HTMLElement | null
+      if (!track) return
 
-        current.style.transform = `translateX(${translateXValue}px)`
-        if (y > window.scrollY && translateXValue < boundary) {
-          setTranslateXValue(translateXValue + 20)
-        } else if (y < window.scrollY && !(Math.abs(translateXValue) > boundary)) {
-          setTranslateXValue(translateXValue - 20)
-        }
+      const maxShift = Math.max(track.scrollWidth - el.clientWidth, 0)
+      if (maxShift === 0) {
+        el.style.transform = 'translateX(0px)'
+        return
       }
 
-      setY(window.scrollY)
-    },
-    [y, translateXValue, intersecting],
-  )
+      const rect = el.getBoundingClientRect()
+      const travel = rect.height + window.innerHeight
+      const raw = (window.innerHeight - rect.top) / travel
+      const progress = Math.min(Math.max(raw, 0), 1)
 
-  useEffect(() => {
-    setY(window.scrollY)
-    window.addEventListener('scroll', handleScroll)
+      el.style.transform = `translateX(${-(progress * maxShift)}px)`
+    }
+
+    const onScroll = (): void => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(update)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    onScroll()
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
-  }, [handleScroll])
-
-  if (archiveRef.current) {
-    // scroll archiveRef when appeared on screen via intersection observer
-    const observer = new IntersectionObserver(
-      entries => {
-        const [entry] = entries
-        setIntersecting(entry.isIntersecting)
-      },
-      {
-        rootMargin: '-50% 0% -50% 0%',
-        threshold: 0,
-      },
-    )
-
-    observer.observe(archiveRef.current)
-  }
+  }, [results])
 
   return (
     <div
