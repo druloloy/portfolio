@@ -178,7 +178,7 @@ export const CollectionArchive: React.FC<Props> = props => {
     let frame = 0
 
     const update = (): void => {
-      const track = el.firstElementChild as HTMLElement | null
+      const track = el.querySelector<HTMLElement>(`.${classes.grid}`)
       if (!track) return
 
       const maxShift = Math.max(track.scrollWidth - el.clientWidth, 0)
