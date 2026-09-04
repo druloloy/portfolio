@@ -8,6 +8,7 @@ import { Gutter } from '../../_components/Gutter'
 import { CMSLink } from '../../_components/Link'
 import { Media } from '../../_components/Media'
 import RichText from '../../_components/RichText'
+import { staggerDelay } from '../../_utilities/staggerDelay'
 
 import './override.scss'
 
@@ -169,7 +170,7 @@ export const RevampHero: React.FC<Page['hero']> = ({ richText, media, links, ico
                   data-aos="fade-up"
                   data-aos-once="true"
                   data-aos-duration="1000"
-                  data-aos-delay={500 * (i + 1)}
+                  data-aos-delay={staggerDelay(i + 1)}
                   key={i}
                 >
                   <CMSLink {...link} />
@@ -186,7 +187,7 @@ export const RevampHero: React.FC<Page['hero']> = ({ richText, media, links, ico
                   data-aos="fade-up"
                   data-aos-once="true"
                   data-aos-duration="1000"
-                  data-aos-delay={500 * (i + 2)}
+                  data-aos-delay={staggerDelay(i + 2)}
                   key={i}
                 >
                   <CMSLink {...iconLink} />
