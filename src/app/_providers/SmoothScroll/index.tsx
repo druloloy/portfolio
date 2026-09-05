@@ -61,6 +61,42 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     ScrollTrigger.addEventListener('refresh', onRefresh)
 
+    // ScrollTrigger's refresh only fires on load and on window resize, and
+    // Lenis' own ResizeObserver is attached to `document.documentElement` —
+    // which `app.scss` pins to `height: 100%`. That box is therefore always
+    // exactly one viewport tall and its observer can never fire, so Lenis keeps
+    // whichever scroll limit it happened to measure at init. Anything that
+    // grows the page afterwards (images decoding, webfonts swapping, late
+    // hydration) is invisible to it, and it clamps scrolling short of the
+    // bottom: the page simply stops partway down with content still below.
+    //
+    // The body's element children carry the real content height, so observing
+    // them gives Lenis the signal it is missing. This is why the symptom looked
+    // like a projects-section bug — that section is where most of the late
+    // height arrives — and why it never reproduced under programmatic
+    // scrolling, which bypasses Lenis' limit entirely.
+    let frame = 0
+    let lastHeight = document.documentElement.scrollHeight
+
+    const remeasure = (): void => {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        const height = document.documentElement.scrollHeight
+        // Bail when nothing actually moved, so a refresh that itself nudges
+        // layout cannot feed back into this observer forever.
+        if (height === lastHeight) return
+        lastHeight = height
+        lenis.resize()
+        ScrollTrigger.refresh()
+      })
+    }
+
+    const contentObserver = new ResizeObserver(remeasure)
+    Array.from(document.body.children).forEach(child => {
+      if (child instanceof HTMLElement) contentObserver.observe(child)
+    })
+
     const onTick = (time: number): void => {
       lenis.raf(time * 1000)
     }
@@ -73,6 +109,8 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     ScrollTrigger.refresh()
 
     return () => {
+      if (frame) cancelAnimationFrame(frame)
+      contentObserver.disconnect()
       ScrollTrigger.removeEventListener('refresh', onRefresh)
       gsap.ticker.remove(onTick)
       lenis.destroy()
