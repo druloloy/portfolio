@@ -79,12 +79,16 @@ export const ArchiveBlock: React.FC<
           ease: 'none',
           scrollTrigger: {
             trigger: section,
-            start: 'top top',
-            // Exactly the distance the track travels, so the sweep completes
-            // as the pin releases and no scroll is spent on empty approach.
-            end: () => `+=${Math.abs(centreOn(first) - centreOn(last))}`,
-            pin: true,
-            pinSpacing: true,
+            // No pin. A pin reserves scroll distance through an injected
+            // pin-spacer, and that reservation is part of the document height —
+            // which made this one section responsible for the position of every
+            // section below it and the page's scroll limit. Four separate
+            // downstream breakages traced back to it.
+            //
+            // Scrubbing across the section's own passage through the viewport
+            // gives the same sweep with no reserved distance and no coupling.
+            start: 'top bottom',
+            end: 'bottom top',
             scrub: 1,
             invalidateOnRefresh: true,
           },
