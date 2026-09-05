@@ -1,6 +1,14 @@
 import type { Footer, Header, Settings } from '../../payload/payload-types'
 import { FOOTER_QUERY, HEADER_QUERY, SETTINGS_QUERY } from '../_graphql/globals'
-import { GRAPHQL_API_URL } from './shared'
+import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
+
+// Globals are read on every page by the header and footer, so leaving them
+// uncached meant extra database round trips on top of the page's own. Each is
+// tagged so saving the global in the admin panel busts it at once; the TTL is
+// the backstop described in `shared.ts`.
+const globalCache = (name: string): { next: { tags: string[]; revalidate: number } } => ({
+  next: { tags: [`global_${name}`], revalidate: CACHE_REVALIDATE_SECONDS },
+})
 
 export async function fetchSettings(): Promise<Settings> {
   if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
@@ -10,7 +18,7 @@ export async function fetchSettings(): Promise<Settings> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    ...globalCache('settings'),
     body: JSON.stringify({
       query: SETTINGS_QUERY,
     }),
@@ -35,7 +43,7 @@ export async function fetchHeader(): Promise<Header> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    ...globalCache('header'),
     body: JSON.stringify({
       query: HEADER_QUERY,
     }),
@@ -60,6 +68,7 @@ export async function fetchFooter(): Promise<Footer> {
     headers: {
       'Content-Type': 'application/json',
     },
+    ...globalCache('footer'),
     body: JSON.stringify({
       query: FOOTER_QUERY,
     }),

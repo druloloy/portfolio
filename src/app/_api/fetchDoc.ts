@@ -4,7 +4,7 @@ import type { Config } from '../../payload/payload-types'
 import { PAGE } from '../_graphql/pages'
 import { POST } from '../_graphql/posts'
 import { PROJECT } from '../_graphql/projects'
-import { GRAPHQL_API_URL } from './shared'
+import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
 import { payloadToken } from './token'
 
 const queryMap = {
@@ -39,14 +39,20 @@ export const fetchDoc = async <T>(args: {
     token = cookies().get(payloadToken)
   }
 
+  // Draft requests carry a JWT and return unpublished content, so they must
+  // never enter the shared Data Cache — a cached draft could be served to the
+  // public. Published reads are cached and busted by tag when the doc is saved.
+  const cacheOptions: RequestInit = draft
+    ? { cache: 'no-store' }
+    : { next: { tags: [`${collection}_${slug}`], revalidate: CACHE_REVALIDATE_SECONDS } }
+
   const doc: T = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
     },
-    cache: 'no-store',
-    next: { tags: [`${collection}_${slug}`] },
+    ...cacheOptions,
     body: JSON.stringify({
       query: queryMap[collection].query,
       variables: {

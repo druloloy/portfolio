@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload/types'
 
+import { revalidateGlobalHook } from './hooks/revalidateGlobal'
+
 export const Settings: GlobalConfig = {
   slug: 'settings',
   typescript: {
@@ -10,6 +12,9 @@ export const Settings: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobalHook('settings')],
   },
   fields: [
     {

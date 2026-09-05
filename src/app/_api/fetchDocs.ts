@@ -4,7 +4,7 @@ import type { Config } from '../../payload/payload-types'
 import { PAGES } from '../_graphql/pages'
 import { POSTS } from '../_graphql/posts'
 import { PROJECTS } from '../_graphql/projects'
-import { GRAPHQL_API_URL } from './shared'
+import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
 import { payloadToken } from './token'
 
 const queryMap = {
@@ -36,14 +36,18 @@ export const fetchDocs = async <T>(
     token = cookies().get(payloadToken)
   }
 
+  // See the note in `fetchDoc.ts`: drafts stay out of the shared Data Cache.
+  const cacheOptions: RequestInit = draft
+    ? { cache: 'no-store' }
+    : { next: { tags: [collection], revalidate: CACHE_REVALIDATE_SECONDS } }
+
   const docs: T[] = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
     },
-    cache: 'no-store',
-    next: { tags: [collection] },
+    ...cacheOptions,
     body: JSON.stringify({
       query: queryMap[collection].query,
       variables,
