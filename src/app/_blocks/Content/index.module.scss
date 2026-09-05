@@ -58,7 +58,7 @@
 .work_exp {
   font-family: var(--font-work-sans);
   h2 {
-    font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
+    @include display-h2;
   }
   p {
     font: 500 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);

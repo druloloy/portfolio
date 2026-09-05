@@ -9,6 +9,12 @@ import { Gutter } from '../../_components/Gutter'
 import RichText from '../../_components/RichText'
 import { ArchiveBlockProps } from './types'
 
+type SweepTrigger = {
+  trigger: Element
+  start: string
+  end: string
+}
+
 import classes from './index.module.scss'
 
 export const ArchiveBlock: React.FC<
@@ -45,7 +51,10 @@ export const ArchiveBlock: React.FC<
 
     gsap.registerPlugin(ScrollTrigger)
 
-    const ctx = gsap.context(() => {
+    // Both breakpoints sweep between exactly the same two positions — first
+    // card centred, last card centred. What differs is the stretch of scrolling
+    // that sweep is mapped onto.
+    const sweep = (scrollTrigger: SweepTrigger): void => {
       const track = section.querySelector<HTMLElement>('[data-carousel-track]')
       const viewport = track?.parentElement
       if (!track || !viewport) return
@@ -54,9 +63,9 @@ export const ArchiveBlock: React.FC<
       if (cards.length === 0) return
 
       // A card's left offset inside the track. Derived from bounding rects
-      // rather than offsetLeft: the pin's spacer changes the offsetParent, but
-      // both rects shift equally with the track's transform, so their
-      // difference is transform-independent and valid mid-animation.
+      // rather than offsetLeft: both rects shift equally with the track's
+      // transform, so their difference is transform-independent and stays
+      // valid mid-animation.
       const offsetWithinTrack = (card: HTMLElement): number =>
         card.getBoundingClientRect().left - track.getBoundingClientRect().left
 
@@ -67,8 +76,7 @@ export const ArchiveBlock: React.FC<
       const first = cards[0]
       const last = cards[cards.length - 1]
 
-      // With one card, start and end coincide: a pin with zero distance traps
-      // scroll with nothing to show for it, so skip the trigger entirely.
+      // With one card, start and end coincide: there is nothing to sweep.
       if (Math.abs(centreOn(first) - centreOn(last)) <= 0) return
 
       gsap.fromTo(
@@ -78,36 +86,52 @@ export const ArchiveBlock: React.FC<
           x: () => centreOn(last),
           ease: 'none',
           scrollTrigger: {
-            trigger: section,
-            // No pin. A pin reserves scroll distance through an injected
-            // pin-spacer, and that reservation is part of the document height —
-            // which made this one section responsible for the position of every
-            // section below it and the page's scroll limit. Four separate
-            // downstream breakages traced back to it.
-            //
-            // Scrubbing across the section's own passage through the viewport
-            // gives the same sweep with no reserved distance and no coupling.
-            start: 'top bottom',
-            end: 'bottom top',
             scrub: 1,
             invalidateOnRefresh: true,
+            ...scrollTrigger,
           },
         },
       )
-    }, section)
+    }
 
-    // The pin reserves scroll distance from the section's size at setup, and
-    // that reservation is part of the document height — so every section below
-    // it, and the page's own scroll limit, depend on it staying accurate.
+    const mm = gsap.matchMedia(section)
+
+    // Above mid-break the section is a full `height: 100vh` with the card row
+    // filling whatever the heading leaves, so the row occupies most of the
+    // section and scrubbing across the section's own passage through the
+    // viewport reads correctly.
+    mm.add('(min-width: 1025px)', () => {
+      sweep({ trigger: section, start: 'top bottom', end: 'bottom top' })
+    })
+
+    // At mid-break and below the section becomes `height: fit-content` and the
+    // row is a small part of it — 341px inside an 845px section on a 375px
+    // phone. Scrubbing across the whole section then spends most of its
+    // progress while the row is still off screen: measured, the sweep was
+    // already 51% done by the time the row was fully visible, so the first
+    // project had swept past before it could be seen.
     //
-    // Nothing else re-measures. Card images finishing, fetched cards arriving,
-    // fonts swapping and viewport resizes all change the layout afterwards and
-    // would otherwise leave the reservation stale, stranding the page short of
-    // its real end.
+    // Anchoring to the row instead maps the sweep onto exactly the stretch
+    // where the row is fully on screen: progress 0 as its bottom meets the
+    // viewport bottom, progress 1 as its top reaches the viewport top. The
+    // first card is centred when the row settles into view and the last is
+    // centred as it leaves — the desktop behaviour, on a phone.
+    mm.add('(max-width: 1024px)', () => {
+      const row = section.querySelector<HTMLElement>('[data-carousel-track]')?.parentElement
+      if (!row) return
+      sweep({ trigger: row, start: 'bottom bottom', end: 'top top' })
+    })
+
+    // ScrollTrigger resolves start/end from the trigger's measurements at
+    // setup and does not re-measure on its own. Card images finishing, fetched
+    // cards arriving and fonts swapping all move those positions afterwards,
+    // which would otherwise leave the sweep mapped onto the wrong stretch of
+    // scrolling.
     //
-    // The track is observed as well as the section because `.projects` is a
-    // fixed `height: 100vh`: cards loading never changes the section's size,
-    // only the track's, so observing the section alone would never fire.
+    // The track is observed as well as the section because above mid-break
+    // `.projects` is a fixed `height: 100vh`: cards loading never changes the
+    // section's size there, only the track's, so observing the section alone
+    // would never fire.
     let refreshFrame = 0
 
     const scheduleRefresh = (): void => {
@@ -131,7 +155,7 @@ export const ArchiveBlock: React.FC<
       cancelAnimationFrame(refreshFrame)
       observer.disconnect()
       window.removeEventListener('load', scheduleRefresh)
-      ctx.revert()
+      mm.revert()
     }
   }, [blockName, populatedDocs, selectedDocs])
 

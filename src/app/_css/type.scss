@@ -108,3 +108,30 @@
     font-size: 13px;
   }
 }
+
+// Display headings for the page sections.
+//
+// The desktop values here are brand values and are reproduced exactly as they
+// were written inline at each call site — nothing above 768px changes.
+//
+// What is new is the mobile step-down. These sizes are built with `max()`, and
+// 4vw is only ~15px on a 375px screen, so the *floor* is what every phone
+// actually gets: the section headings rendered at a flat 48px regardless of how
+// narrow the screen was, which is what made them swallow the viewport.
+@mixin display-h1 {
+  font: bold max(36px, 4vw) / max(48px, 5vw) var(--font-space-grotesk);
+
+  @include small-break {
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+@mixin display-h2 {
+  font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
+
+  @include small-break {
+    font-size: 34px;
+    line-height: 36px;
+  }
+}

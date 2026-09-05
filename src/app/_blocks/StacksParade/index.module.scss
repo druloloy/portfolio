@@ -31,7 +31,7 @@
 
   h2 {
     text-transform: uppercase;
-    font: bold max(48px, 4vw) / max(52px, 5vw) var(--font-space-grotesk);
+    @include display-h2;
   }
 
   p {

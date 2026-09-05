@@ -1,4 +1,4 @@
-@import '../../_css/queries.scss';
+@import '../../_css/common';
 
 .hero {
     width: 100vw;
@@ -33,7 +33,7 @@
 }
 
 .content {
-    font: bold max(36px, 4vw) / max(48px, 5vw) var(--font-space-grotesk);
+    @include display-h1;
     color: var(--color-secondary);
     text-align: center;
     text-transform: uppercase;

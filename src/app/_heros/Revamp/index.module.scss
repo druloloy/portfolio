@@ -1,4 +1,4 @@
-@import '../../_css/queries.scss';
+@import '../../_css/common';
 
 .hero {
   min-height: 100vh;
@@ -16,7 +16,7 @@
   }
 
   h1, code {
-    font: bold max(36px, 4vw) / max(48px, 5vw) var(--font-space-grotesk);
+    @include display-h1;
   }
 
   code {
@@ -51,6 +51,21 @@
     // margin-top: var(--base);
     margin-left: calc(var(--gutter-h) * -1);
     width: calc(100% + var(--gutter-h) * 2);
+  }
+
+  // On a phone the art is a portrait 1080x1440 running the full width, which
+  // makes it 500px tall on an 812px screen and pushes the headline to y=524 —
+  // below the fold on most devices. Sizing it by viewport height instead caps
+  // it at roughly a third of the screen, so the headline comes back up without
+  // changing the composition: art on top, headline beneath, as on desktop.
+  //
+  // The width is derived from the height because the aspect ratio is fixed:
+  // 1080/1440 is 0.75, so a 32vh tall image is 24vh wide. Whichever of the two
+  // is smaller wins, which keeps it sane on short landscape screens too.
+  @include small-break {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(62%, 24vh);
   }
 }
 
