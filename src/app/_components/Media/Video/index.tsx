@@ -23,7 +23,9 @@ export const Video: React.FC<MediaProps> = props => {
   }, [])
 
   if (resource && typeof resource !== 'string') {
-    const { filename } = resource
+    // See the note in ../Image: prefer the URL Payload stores so the file can
+    // be served from wherever it actually lives.
+    const { filename, url } = resource
 
     return (
       <video
@@ -36,7 +38,7 @@ export const Video: React.FC<MediaProps> = props => {
         onClick={onClick}
         ref={videoRef}
       >
-        <source src={`${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}`} />
+        <source src={url || `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}`} />
       </video>
     )
   }

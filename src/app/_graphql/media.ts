@@ -1,4 +1,5 @@
 export const MEDIA_FIELDS = `
+url
 mimeType
 filename
 width

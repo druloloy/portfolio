@@ -35,15 +35,19 @@ export const Image: React.FC<MediaProps> = props => {
       height: fullHeight,
       filename: fullFilename,
       alt: altFromResource,
+      url: urlFromResource,
     } = resource
 
     width = fullWidth
     height = fullHeight
     alt = altFromResource
 
-    const filename = fullFilename
-
-    src = `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}`
+    // Prefer the URL Payload stores on the document. Hard-coding
+    // `<serverURL>/media/<filename>` meant every image was fetched through this
+    // app no matter where the file actually lived, so the storage adapter's own
+    // URL — a bucket or CDN origin, once one is configured — could never be
+    // used. The old path stays as a fallback for documents with no url.
+    src = urlFromResource || `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${fullFilename}`
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
