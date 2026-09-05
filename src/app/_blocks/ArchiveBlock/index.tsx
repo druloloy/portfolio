@@ -92,7 +92,43 @@ export const ArchiveBlock: React.FC<
       )
     }, section)
 
-    return () => ctx.revert()
+    // The pin reserves scroll distance from the section's size at setup, and
+    // that reservation is part of the document height — so every section below
+    // it, and the page's own scroll limit, depend on it staying accurate.
+    //
+    // Nothing else re-measures. Card images finishing, fetched cards arriving,
+    // fonts swapping and viewport resizes all change the layout afterwards and
+    // would otherwise leave the reservation stale, stranding the page short of
+    // its real end.
+    //
+    // The track is observed as well as the section because `.projects` is a
+    // fixed `height: 100vh`: cards loading never changes the section's size,
+    // only the track's, so observing the section alone would never fire.
+    let refreshFrame = 0
+
+    const scheduleRefresh = (): void => {
+      cancelAnimationFrame(refreshFrame)
+      refreshFrame = requestAnimationFrame(() => {
+        ScrollTrigger.refresh()
+      })
+    }
+
+    const observer = new ResizeObserver(scheduleRefresh)
+    observer.observe(section)
+
+    const trackEl = section.querySelector<HTMLElement>('[data-carousel-track]')
+    if (trackEl) observer.observe(trackEl)
+
+    // Images are the common case and do not resize anything observable until
+    // they decode, so take one more measurement once everything has loaded.
+    window.addEventListener('load', scheduleRefresh)
+
+    return () => {
+      cancelAnimationFrame(refreshFrame)
+      observer.disconnect()
+      window.removeEventListener('load', scheduleRefresh)
+      ctx.revert()
+    }
   }, [blockName, populatedDocs, selectedDocs])
 
   return (
