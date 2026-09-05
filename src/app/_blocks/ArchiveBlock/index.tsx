@@ -50,20 +50,39 @@ export const ArchiveBlock: React.FC<
       const viewport = track?.parentElement
       if (!track || !viewport) return
 
-      // The cards are narrower than the viewport, so there is no overflow to
-      // scroll through. Instead the track sweeps across: it starts just past
-      // the right edge and ends just past the left. The pin lasts exactly that
-      // distance, so the sweep completes as the section releases.
+      const cards = Array.from(track.children) as HTMLElement[]
+      if (cards.length === 0) return
+
+      // A card's left offset inside the track. Derived from bounding rects
+      // rather than offsetLeft: the pin's spacer changes the offsetParent, but
+      // both rects shift equally with the track's transform, so their
+      // difference is transform-independent and valid mid-animation.
+      const offsetWithinTrack = (card: HTMLElement): number =>
+        card.getBoundingClientRect().left - track.getBoundingClientRect().left
+
+      // Track position that places a given card in the centre of the window.
+      const centreOn = (card: HTMLElement): number =>
+        viewport.clientWidth / 2 - card.getBoundingClientRect().width / 2 - offsetWithinTrack(card)
+
+      const first = cards[0]
+      const last = cards[cards.length - 1]
+
+      // With one card, start and end coincide: a pin with zero distance traps
+      // scroll with nothing to show for it, so skip the trigger entirely.
+      if (Math.abs(centreOn(first) - centreOn(last)) <= 0) return
+
       gsap.fromTo(
         track,
-        { x: () => viewport.clientWidth },
+        { x: () => centreOn(first) },
         {
-          x: () => -track.scrollWidth,
+          x: () => centreOn(last),
           ease: 'none',
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${viewport.clientWidth + track.scrollWidth}`,
+            // Exactly the distance the track travels, so the sweep completes
+            // as the pin releases and no scroll is spent on empty approach.
+            end: () => `+=${Math.abs(centreOn(first) - centreOn(last))}`,
             pin: true,
             pinSpacing: true,
             scrub: 1,
