@@ -61,7 +61,7 @@
     @include display-h2;
   }
   p {
-    font: 500 max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
+    @include display-lead;
   }
 
   div[class*="Content_column--full"] {

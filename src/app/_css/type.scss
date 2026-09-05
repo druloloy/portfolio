@@ -135,3 +135,19 @@
     line-height: 36px;
   }
 }
+
+// Section lead paragraphs and the stack category labels.
+//
+// Same `max()` floor problem as the display headings above: 1vw is ~4px on a
+// phone, so every screen narrower than 2800px renders these at the 28px floor.
+// On a 375px screen that is roughly double a comfortable reading size, and once
+// the headings stepped down to 34px there was barely any hierarchy left between
+// heading and body. Desktop keeps the 28px it has always had.
+@mixin display-lead($weight: 500) {
+  font: #{$weight} max(28px, 1vw) / max(36px, 2vw) var(--font-work-sans);
+
+  @include small-break {
+    font-size: 18px;
+    line-height: 28px;
+  }
+}
