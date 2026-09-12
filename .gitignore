@@ -9,3 +9,6 @@ node_modules
 keystore/keyfile.*.json
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# Planning and audit docs are kept locally, not shipped
+docs/superpowers/
