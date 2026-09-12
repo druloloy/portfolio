@@ -1,4 +1,4 @@
-import { iconPickerField } from '@innovixx/payload-icon-picker-field'
+import { iconField } from './iconField'
 import type { Field } from 'payload'
 
 import deepMerge from '../utilities/deepMerge'
@@ -78,7 +78,7 @@ const iconLink: IconLinkType = ({ disableLabel = false, overrides = {} } = {}) =
   ]
 
   if (!disableLabel) {
-    linkTypes.map(linkType => ({
+    linkTypes.map((linkType) => ({
       ...linkType,
       admin: {
         ...linkType.admin,
@@ -90,10 +90,11 @@ const iconLink: IconLinkType = ({ disableLabel = false, overrides = {} } = {}) =
       type: 'row',
       fields: [
         ...linkTypes,
-        iconPickerField({
+        iconField({
           name: 'icon',
           label: 'Icon',
-          required: true,          admin: {
+          required: true,
+          admin: {
             width: '50%',
           },
         }),

@@ -24,7 +24,6 @@
   "dependencies": {
     "@faceless-ui/modal": "3.0.0",
     "@faceless-ui/scroll-info": "2.0.0",
-    "@innovixx/payload-icon-picker-field": "^1.0.3",
     "@payloadcms/db-postgres": "3.89.0",
     "@payloadcms/next": "3.89.0",
     "@payloadcms/payload-cloud": "3.89.0",

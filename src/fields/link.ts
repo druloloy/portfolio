@@ -1,4 +1,4 @@
-import { iconPickerField } from '@innovixx/payload-icon-picker-field'
+import { iconField } from './iconField'
 import type { Field } from 'payload'
 
 import deepMerge from '../utilities/deepMerge'
@@ -105,7 +105,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
   ]
 
   if (!disableLabel) {
-    linkTypes.map(linkType => ({
+    linkTypes.map((linkType) => ({
       ...linkType,
       admin: {
         ...linkType.admin,
@@ -127,9 +127,10 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
             condition: (_, siblingData) => !['iconUrl'].includes(siblingData?.type),
           },
         },
-        iconPickerField({
+        iconField({
           name: 'iconPicker',
-          label: 'Icon',          admin: {
+          label: 'Icon',
+          admin: {
             condition: (_, siblingData) => siblingData?.type === 'iconUrl',
           },
         }),
@@ -148,7 +149,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
     ]
 
     if (appearances) {
-      appearanceOptionsToUse = appearances.map(appearance => appearanceOptions[appearance])
+      appearanceOptionsToUse = appearances.map((appearance) => appearanceOptions[appearance])
     }
 
     linkResult.fields.push({
@@ -163,9 +164,10 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
     })
 
     linkResult.fields.push(
-      iconPickerField({
+      iconField({
         name: 'icon',
-        label: 'Icon',        admin: {
+        label: 'Icon',
+        admin: {
           condition: (_, siblingData) => siblingData?.appearance === 'iconPrimary',
         },
       }),

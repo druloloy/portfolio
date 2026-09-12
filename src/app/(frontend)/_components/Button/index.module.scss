@@ -81,11 +81,11 @@
   padding: 0;
   color: var(--theme-text);
 
-  &:local() {
-    .label {
-      text-transform: none;
-      line-height: inherit;
-      font-size: inherit;
-    }
+  // See the note in Card: an empty :local() is a no-op that Next 16 PostCSS
+  // rejects as an empty selector.
+  .label {
+    text-transform: none;
+    line-height: inherit;
+    font-size: inherit;
   }
 }

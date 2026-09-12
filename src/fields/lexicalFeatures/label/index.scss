@@ -1,9 +1,12 @@
-@import 'payload/scss';
+// v2 pulled in Payload admin SCSS here purely for its base() helper, which is
+// just (20px * multiplier). v3 ships that inside @payloadcms/ui/scss, but
+// importing it would inline the entire admin stylesheet into this CSS module.
+// The computed values are used directly instead.
 
 span.label {
   text-transform: uppercase;
   font-family: 'Roboto Mono', monospace;
   letter-spacing: 2px;
-  font-size: base(0.5);
-  margin: 0 0 base(1);
+  font-size: 10px;
+  margin: 0 0 20px;
 }

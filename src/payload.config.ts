@@ -43,6 +43,12 @@ export default buildConfig({
   editor: lexicalEditor({}),
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI },
+    // Drizzle's schema push is on by default in development. This database is
+    // production, so leaving it on would let simply starting the dev server
+    // rewrite the live schema to match v3 — silently and with no way back.
+    // Schema changes go through generated migration files instead, reviewed and
+    // applied deliberately. Turn this on only against a throwaway database.
+    push: false,
   }),
   collections: [Pages, Posts, Projects, Media, Categories, Users, Comments, Stacks],
   globals: [Settings, Header, Footer],

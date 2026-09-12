@@ -15,13 +15,14 @@
 .horizontal {
   flex-direction: row;
 
-  &:local() {
-    .mediaWrapper {
-      width: 150px;
+  // Was wrapped in an empty :local() block. :local with no argument is a
+  // no-op that older sass-loader tolerated and that Next 16 PostCSS rejects
+  // outright as an empty selector. Nesting directly is identical output.
+  .mediaWrapper {
+    width: 150px;
 
-      @include mid-break {
-        width: 100%;
-      }
+    @include mid-break {
+      width: 100%;
     }
   }
 

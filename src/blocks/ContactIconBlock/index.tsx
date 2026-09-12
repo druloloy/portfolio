@@ -1,10 +1,11 @@
-import { iconPickerField } from '@innovixx/payload-icon-picker-field'
+import { iconField } from '../../fields/iconField'
 import { Block, Field } from 'payload'
 
 const iconContactFields: Field[] = [
-  iconPickerField({
+  iconField({
     name: 'icon',
-    label: 'Icon',    admin: {
+    label: 'Icon',
+    admin: {
       condition: (_, siblingData) => siblingData?.appearance === 'iconPrimary',
     },
   }),

@@ -1,5 +1,8 @@
-@import 'payload/scss';
+// v2 pulled in Payload admin SCSS here purely for its base() helper, which is
+// just (20px * multiplier). v3 ships that inside @payloadcms/ui/scss, but
+// importing it would inline the entire admin stylesheet into this CSS module.
+// The computed values are used directly instead.
 
 span.largeBody {
-  font-size: base(0.8);
+  font-size: 16px;
 }

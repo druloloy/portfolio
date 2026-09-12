@@ -175,11 +175,17 @@ export interface Page {
             } | null;
             url?: string | null;
             label?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             iconPicker?: string | null;
             /**
              * Choose how the link should be rendered.
              */
             appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon?: string | null;
           };
           id?: string | null;
@@ -195,6 +201,9 @@ export interface Page {
               value: number | Page;
             } | null;
             url?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon: string;
           };
           id?: string | null;
@@ -231,11 +240,17 @@ export interface Page {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('primary' | 'secondary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
               id?: string | null;
@@ -276,11 +291,17 @@ export interface Page {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
             }[]
@@ -539,11 +560,17 @@ export interface Post {
             } | null;
             url?: string | null;
             label?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             iconPicker?: string | null;
             /**
              * Choose how the link should be rendered.
              */
             appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon?: string | null;
           };
           id?: string | null;
@@ -559,6 +586,9 @@ export interface Post {
               value: number | Page;
             } | null;
             url?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon: string;
           };
           id?: string | null;
@@ -595,11 +625,17 @@ export interface Post {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('primary' | 'secondary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
               id?: string | null;
@@ -640,11 +676,17 @@ export interface Post {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
             }[]
@@ -752,11 +794,17 @@ export interface Post {
                     } | null;
                     url?: string | null;
                     label?: string | null;
+                    /**
+                     * Icon name from react-icons/fa6, for example FaGithub.
+                     */
                     iconPicker?: string | null;
                     /**
                      * Choose how the link should be rendered.
                      */
                     appearance?: ('primary' | 'secondary') | null;
+                    /**
+                     * Icon name from react-icons/fa6, for example FaGithub.
+                     */
                     icon?: string | null;
                   };
                   id?: string | null;
@@ -797,11 +845,17 @@ export interface Post {
                     } | null;
                     url?: string | null;
                     label?: string | null;
+                    /**
+                     * Icon name from react-icons/fa6, for example FaGithub.
+                     */
                     iconPicker?: string | null;
                     /**
                      * Choose how the link should be rendered.
                      */
                     appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                    /**
+                     * Icon name from react-icons/fa6, for example FaGithub.
+                     */
                     icon?: string | null;
                   };
                 }[]
@@ -957,11 +1011,17 @@ export interface Project {
             } | null;
             url?: string | null;
             label?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             iconPicker?: string | null;
             /**
              * Choose how the link should be rendered.
              */
             appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon?: string | null;
           };
           id?: string | null;
@@ -977,6 +1037,9 @@ export interface Project {
               value: number | Page;
             } | null;
             url?: string | null;
+            /**
+             * Icon name from react-icons/fa6, for example FaGithub.
+             */
             icon: string;
           };
           id?: string | null;
@@ -1013,11 +1076,17 @@ export interface Project {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('primary' | 'secondary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
               id?: string | null;
@@ -1058,11 +1127,17 @@ export interface Project {
                 } | null;
                 url?: string | null;
                 label?: string | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 iconPicker?: string | null;
                 /**
                  * Choose how the link should be rendered.
                  */
                 appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                /**
+                 * Icon name from react-icons/fa6, for example FaGithub.
+                 */
                 icon?: string | null;
               };
             }[]
@@ -2050,6 +2125,9 @@ export interface Header {
           } | null;
           url?: string | null;
           label?: string | null;
+          /**
+           * Icon name from react-icons/fa6, for example FaGithub.
+           */
           iconPicker?: string | null;
         };
         id?: string | null;
@@ -2075,6 +2153,9 @@ export interface Footer {
           } | null;
           url?: string | null;
           label?: string | null;
+          /**
+           * Icon name from react-icons/fa6, for example FaGithub.
+           */
           iconPicker?: string | null;
         };
         id?: string | null;

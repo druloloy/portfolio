@@ -13,6 +13,9 @@ const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Next 16 writes AGENTS.md and CLAUDE.md into the repo root on boot. This
+  // project keeps agent tooling out of its history.
+  agentRules: false,
   images: {
     // Payload 3 serves uploads from its own route; the remote patterns cover
     // media still fetched from the configured origin.
@@ -59,6 +62,11 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     root: path.resolve(dirname),
+    // @innovixx/payload-icon-picker-field ships its components as .jsx with no
+    // .js alongside, so a bare directory import of ./IconPicker only resolves
+    // if .jsx is in the extension list. The webpack block below does the same
+    // job for the webpack builder, which Turbopack ignores.
+    resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
   },
 }
 
