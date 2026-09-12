@@ -12,7 +12,7 @@ import { StackCard } from '../StackCard'
 import classes from './index.module.scss'
 
 type Result = {
-  docs: (Stack | string)[]
+  docs: (Post | Project | Stack | number)[]
   hasNextPage: boolean
   hasPrevPage: boolean
   nextPage: number
@@ -143,7 +143,7 @@ export const CollectionStacksParade: React.FC<Props> = props => {
           const json = await req.json()
           clearTimeout(timer)
 
-          const { docs } = json as { docs: (Post | Project | Stack | string)[] }
+          const { docs } = json as { docs: (Post | Project | Stack | number)[] }
 
           if (docs && Array.isArray(docs)) {
             setResults(json)

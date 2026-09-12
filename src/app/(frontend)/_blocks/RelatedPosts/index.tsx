@@ -15,7 +15,7 @@ export type RelatedPostsProps = {
   relationTo: 'posts' | 'projects'
 }
 
-export const RelatedPosts: React.FC<RelatedPostsProps> = props => {
+export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
   const { introContent, docs, relationTo } = props
 
   return (
@@ -28,7 +28,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = props => {
       <Gutter>
         <div className={classes.grid}>
           {docs?.map((doc, index) => {
-            if (typeof doc === 'string') return null
+            if (typeof doc !== 'object' || doc === null) return null
 
             return (
               <div

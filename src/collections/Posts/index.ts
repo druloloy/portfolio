@@ -18,7 +18,7 @@ export const Posts: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
-    preview: doc => {
+    preview: (doc) => {
       return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/next/preview?url=${encodeURIComponent(
         `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/posts/${doc?.slug}`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
@@ -131,7 +131,7 @@ export const Posts: CollectionConfig = {
               name: 'premiumContent',
               type: 'blocks',
               access: {
-                read: ({ req }) => req.user,
+                read: ({ req }) => Boolean(req.user),
               },
               blocks: [CallToAction, Content, MediaBlock, Archive],
             },

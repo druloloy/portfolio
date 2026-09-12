@@ -13,7 +13,7 @@ import { Gutter } from '../Gutter'
 import classes from './index.module.scss'
 
 type Result = {
-  docs: (Post | Project | Stack | string)[]
+  docs: (Post | Project | Stack | number)[]
   hasNextPage: boolean
   hasPrevPage: boolean
   nextPage: number

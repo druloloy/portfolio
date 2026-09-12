@@ -20,7 +20,7 @@ type Props = ProjectBlockProps & {
 }
 
 const GalleryModal: React.FC<{
-  gallery: { media: MediaType | string }[]
+  gallery: { media: MediaType | number }[]
   closeModal: () => void
 }> = ({ gallery, closeModal }) => {
   const sliderSettings: SliderSettings = {

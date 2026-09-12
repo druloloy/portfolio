@@ -22,7 +22,7 @@ export const Video: React.FC<MediaProps> = props => {
     }
   }, [])
 
-  if (resource && typeof resource !== 'string') {
+  if (resource && typeof resource === 'object') {
     // See the note in ../Image: prefer the URL Payload stores so the file can
     // be served from wherever it actually lives.
     const { filename, url } = resource

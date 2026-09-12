@@ -88,11 +88,11 @@ export const PostHero: React.FC<{
         <div className={classes.media}>
           <div className={classes.mediaWrapper}>
             {!metaImage && <div className={classes.placeholder}>No image</div>}
-            {metaImage && typeof metaImage !== 'string' && (
+            {metaImage && typeof metaImage === 'object' && (
               <Media imgClassName={classes.image} resource={metaImage} fill />
             )}
           </div>
-          {metaImage && typeof metaImage !== 'string' && metaImage?.caption && (
+          {metaImage && typeof metaImage === 'object' && metaImage?.caption && (
             <RichText content={metaImage.caption} className={classes.caption} />
           )}
         </div>

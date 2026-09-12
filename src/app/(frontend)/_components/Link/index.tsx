@@ -6,7 +6,7 @@ import { Button, Props as ButtonProps } from '../Button'
 import Icon, { IconTypes } from '../Icon'
 
 type CMSLinkType = {
-  type?: 'custom' | 'reference'
+  type?: 'custom' | 'reference' | 'iconUrl'
   url?: string
   newTab?: boolean
   reference?: {
@@ -19,6 +19,7 @@ type CMSLinkType = {
   className?: string
   invert?: ButtonProps['invert']
   icon?: string
+  iconPicker?: string
 }
 
 export const CMSLink: React.FC<CMSLinkType> = ({

@@ -15,7 +15,7 @@ export const Card: React.FC<{
   relationTo?: 'projects' | 'posts' | 'stacks'
   doc?: Project | Post | Stack
   orientation?: 'horizontal' | 'vertical'
-}> = props => {
+}> = (props) => {
   const {
     relationTo,
     showCategories,
@@ -25,7 +25,8 @@ export const Card: React.FC<{
     orientation = 'vertical',
   } = props
 
-  const { slug, title, categories, meta } = doc || {}
+  const { slug, title, categories } = doc || {}
+  const meta = doc && 'meta' in doc ? doc.meta : undefined
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
@@ -41,7 +42,7 @@ export const Card: React.FC<{
     >
       <Link href={href} className={classes.mediaWrapper}>
         {!metaImage && <div className={classes.placeholder}>No image</div>}
-        {metaImage && typeof metaImage !== 'string' && (
+        {metaImage && typeof metaImage === 'object' && (
           <Media imgClassName={classes.image} resource={metaImage} fill />
         )}
       </Link>
