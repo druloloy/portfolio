@@ -10,7 +10,7 @@ const Comments: CollectionConfig = {
   admin: {
     useAsTitle: 'comment',
     preview: (comment: Partial<Comment>) =>
-      `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/posts/${
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${
         comment?.doc && typeof comment?.doc === 'object' ? comment?.doc?.slug : comment?.doc
       }`,
   },

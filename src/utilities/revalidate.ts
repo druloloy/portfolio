@@ -8,7 +8,7 @@ const hit = async (args: { payload: Payload; query: string; label: string }): Pr
   try {
     const res = await fetch(
       `${
-        process.env.PAYLOAD_PUBLIC_SERVER_URL
+        process.env.NEXT_PUBLIC_SERVER_URL
       }/next/revalidate?secret=${getRevalidationKey()}&${query}`,
     )
 

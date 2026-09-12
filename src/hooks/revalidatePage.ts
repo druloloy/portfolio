@@ -3,7 +3,7 @@ import type { CollectionAfterChangeHook } from 'payload'
 // ensure that the home page is revalidated at '/' instead of '/home'
 export const formatAppURL = ({ doc }): string => {
   const pathToUse = doc.slug === 'home' ? '' : doc.slug
-  const { pathname } = new URL(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/${pathToUse}`)
+  const { pathname } = new URL(`${process.env.NEXT_PUBLIC_SERVER_URL}/${pathToUse}`)
   return pathname
 }
 
@@ -16,7 +16,7 @@ export const revalidatePage: CollectionAfterChangeHook = ({ doc, req }) => {
     try {
       url = formatAppURL({ doc })
       const res = await fetch(
-        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/next/revalidate?secret=${process.env.REVALIDATION_KEY}&revalidatePath=${url}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/next/revalidate?secret=${process.env.REVALIDATION_KEY}&revalidatePath=${url}`,
       )
 
       if (res.ok) {

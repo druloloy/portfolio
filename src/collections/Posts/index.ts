@@ -19,8 +19,8 @@ export const Posts: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
     preview: (doc) => {
-      return `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/next/preview?url=${encodeURIComponent(
-        `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/posts/${doc?.slug}`,
+      return `${process.env.NEXT_PUBLIC_SERVER_URL}/next/preview?url=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${doc?.slug}`,
       )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
     },
   },

@@ -1,24 +1,24 @@
 import type { MetadataRoute } from 'next'
 
 import type { Page, Project } from '@/payload-types'
+import { fetchDocs } from './_api/fetchDocs'
 
-const buildURL = `http://localhost:${process.env.PORT}`
-const serverURL = process.env.PAYLOAD_PUBLIC_SERVER_URL
+const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // skip in development/staging
+  // Skip in development and staging.
   if (!process.env.NEXT_PUBLIC_IS_LIVE) {
     return []
   }
-  const fetchPageURL = `${buildURL}/api/pages?limit=0`
-  const fetchProjectsURL = `${buildURL}/api/projects?limit=0`
 
-  const { docs: pages }: { docs: Page[] } = await fetch(fetchPageURL).then(res => {
-    return res.json()
-  })
-  const { docs: projects }: { docs: Project[] } = await fetch(fetchProjectsURL).then(res => {
-    return res.json()
-  })
+  // Read through the Local API rather than fetching this app's own REST
+  // endpoints. The sitemap is prerendered, and at build time nothing is
+  // listening on localhost yet, so the fetch threw and took the whole build
+  // down with "Error occurred prerendering page /sitemap.xml".
+  const [pages, projects] = await Promise.all([
+    fetchDocs<Page>('pages'),
+    fetchDocs<Project>('projects'),
+  ])
 
   const siteMap: MetadataRoute.Sitemap = []
 
