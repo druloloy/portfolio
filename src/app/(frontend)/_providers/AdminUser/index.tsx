@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import type { User } from '@/payload/payload-types'
+import type { User } from '@/payload-types'
 
 /**
  * Read-only view of the currently authenticated Payload user.

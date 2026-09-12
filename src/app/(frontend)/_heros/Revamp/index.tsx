@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import qs from 'qs'
 
-import { Page, Post, Project, Stack } from '@/payload/payload-types'
+import { Page, Post, Project, Stack } from '@/payload-types'
 import { ArchiveBlockProps } from '../../_blocks/ArchiveBlock/types'
 import { Gutter } from '../../_components/Gutter'
 import { CMSLink } from '../../_components/Link'

@@ -3,7 +3,7 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import qs from 'qs'
 
-import type { Category, Post, Project, Stack } from '@/payload/payload-types'
+import type { Category, Post, Project, Stack } from '@/payload-types'
 import { StacksParadeProps } from '../../_blocks/StacksParade/types'
 import { Gutter } from '../Gutter'
 import Marquee from '../Marquee'

@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { Header as HeaderType } from '@/payload/payload-types'
+import { Header as HeaderType } from '@/payload-types'
 import { ThemeSelector } from '../../../_providers/Theme/ThemeSelector'
 import Icon from '../../Icon'
 import { CMSLink } from '../../Link'

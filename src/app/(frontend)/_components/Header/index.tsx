@@ -4,7 +4,7 @@
 
 import React from 'react'
 
-import type { Header } from '@/payload/payload-types'
+import type { Header } from '@/payload-types'
 import { fetchHeader } from '@/app/(frontend)/_api/fetchGlobals'
 import HeaderComponent from './HeaderComponent'
 

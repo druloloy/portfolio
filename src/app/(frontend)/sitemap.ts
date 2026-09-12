@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import type { Page, Project } from '@/payload/payload-types'
+import type { Page, Project } from '@/payload-types'
 
 const buildURL = `http://localhost:${process.env.PORT}`
 const serverURL = process.env.PAYLOAD_PUBLIC_SERVER_URL

@@ -2,7 +2,7 @@ import { revalidateTag } from 'next/cache'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-import { getRevalidationKey } from '@/payload/utilities/revalidationKey'
+import { getRevalidationKey } from '@/utilities/revalidationKey'
 
 export async function GET(request: NextRequest): Promise<Response> {
   const collection = request.nextUrl.searchParams.get('collection')

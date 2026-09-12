@@ -1,6 +1,6 @@
 import React, { useEffect, useImperativeHandle } from 'react'
 
-import { Post, Project } from '@/payload/payload-types'
+import { Post, Project } from '@/payload-types'
 import { Card } from '../Card'
 
 import classes from './index.module.scss'

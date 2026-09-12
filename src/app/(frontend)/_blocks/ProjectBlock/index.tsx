@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import { FaXmark } from 'react-icons/fa6'
 import Slider, { Settings as SliderSettings } from 'react-slick'
 
-import type { Media as MediaType } from '@/payload/payload-types'
+import type { Media as MediaType } from '@/payload-types'
 import { Gutter } from '../../_components/Gutter'
 import { Media } from '../../_components/Media'
 import RichText from '../../_components/RichText'

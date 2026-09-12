@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Post, Project } from '@/payload/payload-types'
+import { Post, Project } from '@/payload-types'
 import { Card } from '../../_components/Card'
 import { Gutter } from '../../_components/Gutter'
 import RichText from '../../_components/RichText'

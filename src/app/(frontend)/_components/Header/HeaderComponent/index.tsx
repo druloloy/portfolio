@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Gutter } from '../../Gutter'
 import { HeaderNav } from '../Nav'
 
-import type { Header } from '@/payload/payload-types'
+import type { Header } from '@/payload-types'
 
 import classes from './index.module.scss'
 

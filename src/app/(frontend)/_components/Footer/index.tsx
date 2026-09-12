@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-import type { Footer } from '@/payload/payload-types'
+import type { Footer } from '@/payload-types'
 import { fetchFooter, fetchGlobals } from '@/app/(frontend)/_api/fetchGlobals'
 import { ThemeSelector } from '../../_providers/Theme/ThemeSelector'
 import { Gutter } from '../Gutter'
