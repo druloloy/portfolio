@@ -14,7 +14,9 @@ import { generateMeta } from '../../../_utilities/generateMeta'
 // See the note in '../../../[slug]/page.tsx' about this
 export const dynamic = 'force-dynamic'
 
-export default async function Post({ params: { slug } }) {
+export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+
   const { isEnabled: isDraftMode } = await draftMode()
 
   let post: Post | null = null
@@ -87,13 +89,23 @@ export default async function Post({ params: { slug } }) {
 export async function generateStaticParams() {
   try {
     const posts = await fetchDocs<Post>('posts')
-    return posts?.map(({ slug }) => slug)
+    // Next expects one object of route params per entry, not a bare slug.
+    // Returning strings threw "Expected an object, but received type string",
+    // which stayed hidden while the old HTTP fetch failed and this list was
+    // always empty.
+    return posts?.map(({ slug }) => ({ slug })) ?? []
   } catch (error) {
     return []
   }
 }
 
-export async function generateMetadata({ params: { slug } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+
   const { isEnabled: isDraftMode } = await draftMode()
 
   let post: Post | null = null

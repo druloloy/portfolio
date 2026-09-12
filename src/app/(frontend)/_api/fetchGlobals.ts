@@ -1,88 +1,46 @@
-import type { Footer, Header, Settings } from '@/payload-types'
-import { FOOTER_QUERY, HEADER_QUERY, SETTINGS_QUERY } from '../_graphql/globals'
-import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
+import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
+import { getPayload } from 'payload'
 
-// Globals are read on every page by the header and footer, so leaving them
-// uncached meant extra database round trips on top of the page's own. Each is
-// tagged so saving the global in the admin panel busts it at once; the TTL is
-// the backstop described in `shared.ts`.
-const globalCache = (name: string): { next: { tags: string[]; revalidate: number } } => ({
-  next: { tags: [`global_${name}`], revalidate: CACHE_REVALIDATE_SECONDS },
-})
+import type { Footer, Header, Settings } from '@/payload-types'
+import { CACHE_REVALIDATE_SECONDS } from './shared'
+
+/**
+ * Globals are read on every page by the header and footer, so they are the
+ * hottest reads in the app and the ones most worth not sending over HTTP. See
+ * the note in `fetchDoc.ts` for why the Local API replaced the self-call.
+ *
+ * Each keeps the tag it had, so the `afterChange` hooks on the globals still
+ * bust exactly what they busted before, with the TTL from `shared.ts` as the
+ * backstop.
+ */
+const cachedGlobal = <T>(slug: 'settings' | 'header' | 'footer') =>
+  unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: configPromise })
+
+      const result = await payload.findGlobal({
+        slug,
+        // Nav items reference pages, and the header renders their slugs.
+        depth: 2,
+      })
+
+      return result as T
+    },
+    ['global', slug],
+    { tags: [`global_${slug}`], revalidate: CACHE_REVALIDATE_SECONDS },
+  )
 
 export async function fetchSettings(): Promise<Settings> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
-
-  const settings = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...globalCache('settings'),
-    body: JSON.stringify({
-      query: SETTINGS_QUERY,
-    }),
-  })
-    ?.then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
-    })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching settings')
-      return res.data?.Settings
-    })
-
-  return settings
+  return cachedGlobal<Settings>('settings')()
 }
 
 export async function fetchHeader(): Promise<Header> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
-
-  const header = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...globalCache('header'),
-    body: JSON.stringify({
-      query: HEADER_QUERY,
-    }),
-  })
-    ?.then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
-    })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching header')
-      return res.data?.Header
-    })
-
-  return header
+  return cachedGlobal<Header>('header')()
 }
 
 export async function fetchFooter(): Promise<Footer> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
-
-  const footer = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...globalCache('footer'),
-    body: JSON.stringify({
-      query: FOOTER_QUERY,
-    }),
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
-    })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching footer')
-      return res.data?.Footer
-    })
-
-  return footer
+  return cachedGlobal<Footer>('footer')()
 }
 
 export const fetchGlobals = async (): Promise<{
@@ -90,22 +48,12 @@ export const fetchGlobals = async (): Promise<{
   header: Header
   footer: Footer
 }> => {
-  // initiate requests in parallel, then wait for them to resolve
-  // this will eagerly start to the fetch requests at the same time
-  // see https://nextjs.org/docs/app/building-your-application/data-fetching/fetching
-  const settingsData = fetchSettings()
-  const headerData = fetchHeader()
-  const footerData = fetchFooter()
-
-  const [settings, header, footer]: [Settings, Header, Footer] = await Promise.all([
-    await settingsData,
-    await headerData,
-    await footerData,
+  // Started in parallel rather than awaited in turn, as before.
+  const [settings, header, footer] = await Promise.all([
+    fetchSettings(),
+    fetchHeader(),
+    fetchFooter(),
   ])
 
-  return {
-    settings,
-    header,
-    footer,
-  }
+  return { settings, header, footer }
 }

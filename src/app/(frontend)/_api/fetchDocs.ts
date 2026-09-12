@@ -1,64 +1,59 @@
-import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
+import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
+import { getPayload } from 'payload'
 
 import type { Config } from '@/payload-types'
-import { PAGES } from '../_graphql/pages'
-import { POSTS } from '../_graphql/posts'
-import { PROJECTS } from '../_graphql/projects'
-import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
-import { payloadToken } from './token'
+import { CACHE_REVALIDATE_SECONDS } from './shared'
 
-const queryMap = {
-  pages: {
-    query: PAGES,
-    key: 'Pages',
-  },
-  posts: {
-    query: POSTS,
-    key: 'Posts',
-  },
-  projects: {
-    query: PROJECTS,
-    key: 'Projects',
-  },
-}
+type Collection = keyof Config['collections']
+
+/**
+ * Read a whole collection. See the note in `fetchDoc.ts` for why this reads
+ * through the Local API rather than the app's own HTTP endpoint.
+ *
+ * This is what `generateStaticParams` calls, which is exactly where the HTTP
+ * version could not work: at build time nothing is listening on the public
+ * origin yet, so the fetch failed, the error was caught, and an empty list was
+ * returned as though the collection had no documents.
+ */
+const cachedDocs = (collection: Collection) =>
+  unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: configPromise })
+
+      const result = await payload.find({
+        collection,
+        // Callers use these for slugs and card listings, so relationships do
+        // not need populating and a shallower read is cheaper.
+        depth: 1,
+        limit: 300,
+        pagination: false,
+      })
+
+      return result.docs ?? []
+    },
+    [collection, 'all'],
+    { tags: [collection], revalidate: CACHE_REVALIDATE_SECONDS },
+  )
 
 export const fetchDocs = async <T>(
-  collection: keyof Config['collections'],
+  collection: Collection,
   draft?: boolean,
-  variables?: Record<string, unknown>,
 ): Promise<T[]> => {
-  if (!queryMap[collection]) throw new Error(`Collection ${collection} not found`)
-
-  let token: RequestCookie | undefined
-
+  // Drafts stay out of the shared cache, for the reason given in `fetchDoc.ts`.
   if (draft) {
-    const { cookies } = await import('next/headers')
-    token = (await cookies()).get(payloadToken)
-  }
+    const payload = await getPayload({ config: configPromise })
 
-  // See the note in `fetchDoc.ts`: drafts stay out of the shared Data Cache.
-  const cacheOptions: RequestInit = draft
-    ? { cache: 'no-store' }
-    : { next: { tags: [collection], revalidate: CACHE_REVALIDATE_SECONDS } }
-
-  const docs: T[] = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
-    },
-    ...cacheOptions,
-    body: JSON.stringify({
-      query: queryMap[collection].query,
-      variables,
-    }),
-  })
-    ?.then(res => res.json())
-    ?.then(res => {
-      if (res.errors) throw new Error(res?.errors?.[0]?.message ?? 'Error fetching docs')
-
-      return res?.data?.[queryMap[collection].key]?.docs
+    const result = await payload.find({
+      collection,
+      depth: 1,
+      draft: true,
+      limit: 300,
+      pagination: false,
     })
 
-  return docs
+    return (result.docs ?? []) as T[]
+  }
+
+  return (await cachedDocs(collection)()) as T[]
 }

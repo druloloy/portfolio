@@ -1,71 +1,80 @@
-import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
+import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
+import { getPayload } from 'payload'
 
 import type { Config } from '@/payload-types'
-import { PAGE } from '../_graphql/pages'
-import { POST } from '../_graphql/posts'
-import { PROJECT } from '../_graphql/projects'
-import { CACHE_REVALIDATE_SECONDS, GRAPHQL_API_URL } from './shared'
-import { payloadToken } from './token'
+import { CACHE_REVALIDATE_SECONDS } from './shared'
 
-const queryMap = {
-  pages: {
-    query: PAGE,
-    key: 'Pages',
-  },
-  posts: {
-    query: POST,
-    key: 'Posts',
-  },
-  projects: {
-    query: PROJECT,
-    key: 'Projects',
-  },
-}
+type Collection = keyof Config['collections']
+
+/**
+ * Read a single published document, cached and busted by tag on publish.
+ *
+ * This used to POST a GraphQL query to the app's own HTTP endpoint. That made
+ * rendering depend on `NEXT_PUBLIC_SERVER_URL` naming a host that was already
+ * serving this app — which is not true during its own build, and is not true in
+ * any environment deployed somewhere other than that URL. The failure was
+ * silent: the fetch returned the wrong host's HTML, JSON parsing threw, the
+ * error was swallowed and the route fell through to notFound().
+ *
+ * The Local API runs in-process, so there is no origin, no HTTP round trip per
+ * render, and no way for a DNS or hosting change to break rendering.
+ *
+ * Caching moves with it. `fetch` tags are gone, so `unstable_cache` carries the
+ * same tags and the same TTL, and `/next/revalidate` keeps working untouched.
+ */
+const cachedDoc = (collection: Collection, slug: string) =>
+  unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: configPromise })
+
+      const result = await payload.find({
+        collection,
+        // Matches the depth the GraphQL queries relied on: uploads and
+        // relationships arrive as objects rather than ids.
+        depth: 2,
+        limit: 1,
+        pagination: false,
+        where: { slug: { equals: slug } },
+      })
+
+      return result.docs?.[0] ?? null
+    },
+    [collection, slug],
+    {
+      tags: [`${collection}_${slug}`, collection],
+      revalidate: CACHE_REVALIDATE_SECONDS,
+    },
+  )
 
 export const fetchDoc = async <T>(args: {
-  collection: keyof Config['collections']
+  collection: Collection
   slug?: string
   id?: string
   draft?: boolean
 }): Promise<T> => {
   const { collection, slug, draft } = args || {}
 
-  if (!queryMap[collection]) throw new Error(`Collection ${collection} not found`)
+  if (!slug) return null as T
 
-  let token: RequestCookie | undefined
-
+  // Drafts return unpublished content and must never enter a shared cache: a
+  // cached draft could be served to the public. They are read directly, and
+  // `draft: true` makes Payload return the newest version rather than the
+  // published one.
   if (draft) {
-    const { cookies } = await import('next/headers')
-    token = (await cookies()).get(payloadToken)
-  }
+    const payload = await getPayload({ config: configPromise })
 
-  // Draft requests carry a JWT and return unpublished content, so they must
-  // never enter the shared Data Cache — a cached draft could be served to the
-  // public. Published reads are cached and busted by tag when the doc is saved.
-  const cacheOptions: RequestInit = draft
-    ? { cache: 'no-store' }
-    : { next: { tags: [`${collection}_${slug}`], revalidate: CACHE_REVALIDATE_SECONDS } }
-
-  const doc: T = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
-    },
-    ...cacheOptions,
-    body: JSON.stringify({
-      query: queryMap[collection].query,
-      variables: {
-        slug,
-        draft,
-      },
-    }),
-  })
-    ?.then(res => res.json())
-    ?.then(res => {
-      if (res.errors) throw new Error(res?.errors?.[0]?.message ?? 'Error fetching doc')
-      return res?.data?.[queryMap[collection].key]?.docs?.[0]
+    const result = await payload.find({
+      collection,
+      depth: 2,
+      draft: true,
+      limit: 1,
+      pagination: false,
+      where: { slug: { equals: slug } },
     })
 
-  return doc
+    return (result.docs?.[0] ?? null) as T
+  }
+
+  return (await cachedDoc(collection, slug)()) as T
 }

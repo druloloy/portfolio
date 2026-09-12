@@ -19,7 +19,9 @@ import { generateMeta } from '../../_utilities/generateMeta'
 // If you are not using Payload Cloud then this line can be removed, see `../../../README.md#cache`
 export const dynamic = 'force-dynamic'
 
-export default async function Page({ params: { slug = 'home' } }) {
+export default async function Page({ params }: { params: Promise<{ slug?: string }> }) {
+  const { slug = 'home' } = await params
+
   const { isEnabled: isDraftMode } = await draftMode()
 
   let page: Page | null = null
@@ -64,13 +66,23 @@ export default async function Page({ params: { slug = 'home' } }) {
 export async function generateStaticParams() {
   try {
     const pages = await fetchDocs<Page>('pages')
-    return pages?.map(({ slug }) => slug)
+    // Next expects one object of route params per entry, not a bare slug.
+    // Returning strings threw "Expected an object, but received type string",
+    // which stayed hidden while the old HTTP fetch failed and this list was
+    // always empty.
+    return pages?.map(({ slug }) => ({ slug })) ?? []
   } catch (error) {
     return []
   }
 }
 
-export async function generateMetadata({ params: { slug = 'home' } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug?: string }>
+}): Promise<Metadata> {
+  const { slug = 'home' } = await params
+
   const { isEnabled: isDraftMode } = await draftMode()
 
   let page: Page | null = null
