@@ -22,7 +22,7 @@ export const Pages: CollectionConfig = {
     preview: doc => {
       return `${process.env.NEXT_PUBLIC_SERVER_URL}/next/preview?url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/${doc.slug !== 'home' ? doc.slug : ''}`,
-      )}&secret=${process.env.PAYLOAD_PUBLIC_DRAFT_SECRET}`
+      )}&secret=${process.env.NEXT_PRIVATE_DRAFT_SECRET}`
     },
   },
   hooks: {
