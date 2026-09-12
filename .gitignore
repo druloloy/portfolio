@@ -12,3 +12,6 @@ keystore/keyfile.*.json
 
 # Planning and audit docs are kept locally, not shipped
 docs/superpowers/
+
+# Local agent/editor tooling config, not part of the product
+.claude/
