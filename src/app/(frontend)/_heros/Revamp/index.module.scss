@@ -11,9 +11,11 @@
   justify-content: center;
   color: var(--theme-color-secondary);
 
-  div[class^="RichText__richText"] {
-    width: 10%;
-  }
+  // A `width: 10%` rule lived here, keyed off `div[class^="RichText__richText"]`.
+  // That selector never matched: the generated name has a single underscore
+  // (RichText_richText), so the rule was dead for the whole life of v2 and the
+  // hero has always laid out without it. Re-pointing it at a data attribute
+  // would have applied it for the first time and collapsed the hero.
 
   h1, code {
     @include display-h1;

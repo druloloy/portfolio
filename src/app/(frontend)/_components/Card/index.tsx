@@ -36,6 +36,8 @@ export const Card: React.FC<{
 
   return (
     <div
+      // Styled from ArchiveBlock, which cannot see this module's class names.
+      data-card=""
       className={[classes.card, className, orientation && classes[orientation]]
         .filter(Boolean)
         .join(' ')}

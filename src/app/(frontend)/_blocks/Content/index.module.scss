@@ -64,7 +64,7 @@
     @include display-lead;
   }
 
-  div[class*="Content_column--full"] {
+  .column--full {
     margin-bottom: 2rem;
     width: 100%;
   }
@@ -81,7 +81,7 @@
   
   
 
-  div[class*="Content_column--oneThird"] {
+  .column--oneThird {
     display: flex;
     flex-direction: column;
     justify-content: center;
