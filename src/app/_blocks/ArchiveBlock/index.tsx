@@ -9,11 +9,12 @@ import { Gutter } from '../../_components/Gutter'
 import RichText from '../../_components/RichText'
 import { ArchiveBlockProps } from './types'
 
-type SweepTrigger = {
-  trigger: Element
-  start: string
-  end: string
-}
+// How the sweep is driven. Desktop scrubs across the section's own passage
+// through the viewport; mobile pins the section and spends real scroll on the
+// sweep, so each card gets a turn in the centre of the screen.
+type SweepMode =
+  | { kind: 'passing'; trigger: Element }
+  | { kind: 'pinned'; trigger: Element; pin: Element }
 
 import classes from './index.module.scss'
 
@@ -54,7 +55,7 @@ export const ArchiveBlock: React.FC<
     // Both breakpoints sweep between exactly the same two positions — first
     // card centred, last card centred. What differs is the stretch of scrolling
     // that sweep is mapped onto.
-    const sweep = (scrollTrigger: SweepTrigger): void => {
+    const sweep = (mode: SweepMode): void => {
       const track = section.querySelector<HTMLElement>('[data-carousel-track]')
       const viewport = track?.parentElement
       if (!track || !viewport) return
@@ -79,6 +80,33 @@ export const ArchiveBlock: React.FC<
       // With one card, start and end coincide: there is nothing to sweep.
       if (Math.abs(centreOn(first) - centreOn(last)) <= 0) return
 
+      // Distance the track travels. Expressed as a function so
+      // invalidateOnRefresh re-derives it after a resize or a late image,
+      // rather than freezing the value measured at setup.
+      const sweepDistance = (): number => Math.abs(centreOn(first) - centreOn(last))
+
+      const scrollTrigger =
+        mode.kind === 'passing'
+          ? { trigger: mode.trigger, start: 'top bottom', end: 'bottom top' }
+          : {
+              trigger: mode.trigger,
+              // The section is exactly one viewport tall at this breakpoint, so
+              // pinning it flush to the top makes the held frame identical to
+              // the screen: nothing can be clipped, and the nav clearance the
+              // stylesheet reserves actually does its job. Anchoring to the
+              // row's centre instead left the section's top hanging above the
+              // viewport, with the heading stuck behind the fixed nav for the
+              // whole hold.
+              //
+              // It holds for exactly the horizontal distance the track has to
+              // cover, so one pixel of scrolling is one pixel of sweep and the
+              // pin releases precisely as the last card lands in the centre.
+              start: 'top top',
+              end: () => `+=${sweepDistance()}`,
+              pin: mode.pin,
+              anticipatePin: 1,
+            }
+
       gsap.fromTo(
         track,
         { x: () => centreOn(first) },
@@ -101,25 +129,31 @@ export const ArchiveBlock: React.FC<
     // section and scrubbing across the section's own passage through the
     // viewport reads correctly.
     mm.add('(min-width: 1025px)', () => {
-      sweep({ trigger: section, start: 'top bottom', end: 'bottom top' })
+      sweep({ kind: 'passing', trigger: section })
     })
 
     // At mid-break and below the section becomes `height: fit-content` and the
-    // row is a small part of it — 341px inside an 845px section on a 375px
-    // phone. Scrubbing across the whole section then spends most of its
-    // progress while the row is still off screen: measured, the sweep was
-    // already 51% done by the time the row was fully visible, so the first
-    // project had swept past before it could be seen.
+    // row is a small part of it, so scrubbing across the section's passage
+    // spends most of its progress while the row is still off screen.
     //
-    // Anchoring to the row instead maps the sweep onto exactly the stretch
-    // where the row is fully on screen: progress 0 as its bottom meets the
-    // viewport bottom, progress 1 as its top reaches the viewport top. The
-    // first card is centred when the row settles into view and the last is
-    // centred as it leaves — the desktop behaviour, on a phone.
+    // Anchoring to the row fixed that, but the sweep then finished as the row's
+    // top reached the top of the viewport — the last card landed under the
+    // fixed nav with most of the screen empty below it. There is also no way,
+    // without a pin, to hold a card still long enough to be looked at: the row
+    // is always moving up while the cards move sideways.
+    //
+    // So on a phone the section pins. It holds from the moment the row is
+    // vertically centred until the track has covered its full width, which
+    // gives every card a turn in the middle of the screen and only lets the
+    // page move on once the last one has had it.
+    //
+    // A pin reserves its distance through an injected spacer, which is part of
+    // the document height. That is what stranded the page short of its end
+    // before — Lenis cached a scroll limit measured before the spacer existed.
+    // The provider now watches the body's children and re-measures, so the
+    // spacer is accounted for. That check is not optional here.
     mm.add('(max-width: 1024px)', () => {
-      const row = section.querySelector<HTMLElement>('[data-carousel-track]')?.parentElement
-      if (!row) return
-      sweep({ trigger: row, start: 'bottom bottom', end: 'top top' })
+      sweep({ kind: 'pinned', trigger: section, pin: section })
     })
 
     // ScrollTrigger resolves start/end from the trigger's measurements at

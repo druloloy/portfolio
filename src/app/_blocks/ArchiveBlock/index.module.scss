@@ -100,4 +100,25 @@
     flex-direction: column;
     height: fit-content;
   }
+
+  // On a phone this section is pinned while the cards sweep, so whatever is at
+  // the top of it stays there for the whole hold. At 812px there is only 236px
+  // above a centred card, while the heading and intro need 280px and the fixed
+  // nav covers the first 92px — so the heading sat behind the nav, clipped, for
+  // the entire pin. Giving the section exactly one viewport and reserving the
+  // nav's height at the top makes the held frame self-contained: heading, then
+  // intro, then the cards, nothing underneath the nav and nothing cut off.
+  @include small-break {
+    height: 100vh;
+    min-height: 100vh;
+    padding-top: 92px;
+    box-sizing: border-box;
+
+    // Buys back the room the nav clearance costs. The desktop rhythm is
+    // untouched; this only applies where the section is pinned.
+    > div:first-child > div {
+      margin-top: calc(var(--base) / 2);
+      margin-bottom: calc(var(--base) / 2);
+    }
+  }
 }
