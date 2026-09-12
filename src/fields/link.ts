@@ -152,10 +152,17 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
       appearanceOptionsToUse = appearances.map((appearance) => appearanceOptions[appearance])
     }
 
+    // When a caller narrows the appearances, 'default' may not be among them —
+    // the CTA block allows only primary and secondary. Defaulting to a value
+    // outside the field's own options builds a column whose default is not a
+    // member of its enum, which Postgres rejects outright when the table is
+    // created. Fall back to the first option the caller actually allows.
+    const allowedAppearances = appearanceOptionsToUse.map((option) => option.value)
+
     linkResult.fields.push({
       name: 'appearance',
       type: 'select',
-      defaultValue: 'default',
+      defaultValue: allowedAppearances.includes('default') ? 'default' : allowedAppearances[0],
       options: appearanceOptionsToUse,
       admin: {
         description: 'Choose how the link should be rendered.',

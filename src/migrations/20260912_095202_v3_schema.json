@@ -286,7 +286,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -2130,7 +2130,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -4195,7 +4195,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -5818,7 +5818,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -7474,7 +7474,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -9188,7 +9188,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'default'"
+          "default": "'primary'"
         },
         "link_icon": {
           "name": "link_icon",
@@ -15063,6 +15063,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "cb64f04b-3595-471d-ac0b-12b562828a97",
+  "id": "a5aa2549-e7d2-4372-a40a-7584f854007f",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

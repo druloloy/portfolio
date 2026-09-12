@@ -122,7 +122,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum_pages_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum_pages_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar
   );
   
@@ -275,7 +275,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum__pages_v_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum__pages_v_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar,
   	"_uuid" varchar
   );
@@ -446,7 +446,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum_posts_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum_posts_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar
   );
   
@@ -581,7 +581,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum__posts_v_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum__posts_v_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar,
   	"_uuid" varchar
   );
@@ -716,7 +716,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum_projects_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum_projects_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar
   );
   
@@ -857,7 +857,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_icon_picker" varchar,
-  	"link_appearance" "enum__projects_v_blocks_cta_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum__projects_v_blocks_cta_links_link_appearance" DEFAULT 'primary',
   	"link_icon" varchar,
   	"_uuid" varchar
   );
