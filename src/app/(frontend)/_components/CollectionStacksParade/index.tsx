@@ -137,7 +137,7 @@ export const CollectionStacksParade: React.FC<Props> = props => {
       const makeRequest = async () => {
         try {
           const req = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/${relationTo}?${searchQuery}`,
+            `/api/${relationTo}?${searchQuery}`,
           )
 
           const json = await req.json()

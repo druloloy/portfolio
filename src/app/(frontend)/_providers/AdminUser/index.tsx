@@ -21,7 +21,7 @@ export const useAdminUser = (): { user: User | null; isLoading: boolean } => {
 
     const load = async (): Promise<void> => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`, {
+        const res = await fetch(`/api/users/me`, {
           credentials: 'include',
           signal: controller.signal,
         })

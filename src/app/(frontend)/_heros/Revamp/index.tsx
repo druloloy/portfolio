@@ -104,7 +104,7 @@ export const RevampHero: React.FC<Page['hero']> = ({ richText, media, links, ico
 
       const makeRequest = async () => {
         try {
-          const req = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/stacks?${searchQuery}`)
+          const req = await fetch(`/api/stacks?${searchQuery}`)
 
           const json = await req.json()
           clearTimeout(timer)

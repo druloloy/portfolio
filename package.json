@@ -24,7 +24,8 @@
     "db:backup": "node scripts/backup-database.cjs",
     "db:dump-schema": "node scripts/dump-schema.cjs",
     "db:drop": "node scripts/drop-payload-schema.cjs",
-    "db:restore": "node scripts/restore-content.cjs"
+    "db:restore": "node scripts/restore-content.cjs",
+    "db:rebuild-versions": "tsx scripts/rebuild-versions.ts"
   },
   "dependencies": {
     "@faceless-ui/modal": "3.0.0",
