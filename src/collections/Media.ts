@@ -1,11 +1,16 @@
-import { slateEditor } from '@payloadcms/richtext-slate'
+import { lexicalEditor, LinkFeature, ParagraphFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import type { CollectionConfig } from 'payload'
+import { fileURLToPath } from 'url'
+
+// ESM has no __dirname, and v3 requires staticDir to be an absolute path.
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
   upload: {
-    staticDir: path.resolve(__dirname, '../../../media'),
+    staticDir: path.resolve(dirname, '../../media'),
   },
   access: {
     read: () => true,
@@ -19,10 +24,11 @@ export const Media: CollectionConfig = {
     {
       name: 'caption',
       type: 'richText',
-      editor: slateEditor({
-        admin: {
-          elements: ['link'],
-        },
+      // Was slateEditor with only the link element enabled. The Lexical
+      // equivalent is an editor limited to paragraphs and links, so captions
+      // keep the same authoring surface after Slate is dropped.
+      editor: lexicalEditor({
+        features: () => [ParagraphFeature(), LinkFeature({})],
       }),
     },
   ],

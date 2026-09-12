@@ -1,79 +1,16 @@
-import { $setBlocksType } from '@lexical/selection'
-import { $findMatchingParent } from '@lexical/utils'
-import type { FeatureProvider } from '@payloadcms/richtext-lexical'
-import {
-  FormatSectionWithEntries,
-  getSelectedNode,
-  SlashMenuOption,
-} from '@payloadcms/richtext-lexical'
-import { $getSelection, $isRangeSelection } from 'lexical'
+import { createNode, createServerFeature } from '@payloadcms/richtext-lexical'
 
-import { $createLargeBodyNode, $isLargeBodyNode, LargeBodyNode } from './nodes/LargeBodyNode'
+import { LargeBodyNode } from './nodes/LargeBodyNode'
 
-import './index.scss'
-
-export const LargeBodyFeature = (): FeatureProvider => {
-  return {
-    feature: () => ({
-      floatingSelectToolbar: {
-        sections: [
-          FormatSectionWithEntries([
-            {
-              ChildComponent: () => import('./Icon').then(module => module.LargeBodyIcon),
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              isActive: ({ editor, selection }) => {
-                if ($isRangeSelection(selection)) {
-                  const selectedNode = getSelectedNode(selection)
-                  const largeBodyParent = $findMatchingParent(selectedNode, $isLargeBodyNode)
-                  return largeBodyParent != null
-                }
-                return false
-              },
-              key: 'largeBody',
-              label: `Large Body`,
-              onClick: ({ editor }) => {
-                //setHeading(editor, headingSize)
-                editor.update(() => {
-                  const selection = $getSelection()
-                  if ($isRangeSelection(selection)) {
-                    $setBlocksType(selection, () => $createLargeBodyNode())
-                  }
-                })
-              },
-              order: 20,
-            },
-          ]),
-        ],
-      },
-      nodes: [
-        {
-          node: LargeBodyNode,
-          type: LargeBodyNode.getType(),
-        },
-      ],
-      props: null,
-      slashMenu: {
-        options: [
-          {
-            options: [
-              new SlashMenuOption(`Large Body`, {
-                Icon: () => import('./Icon').then(module => module.LargeBodyIcon),
-                keywords: ['largeBody'],
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                onSelect: ({ editor }) => {
-                  const selection = $getSelection()
-                  if ($isRangeSelection(selection)) {
-                    $setBlocksType(selection, () => $createLargeBodyNode())
-                  }
-                },
-              }),
-            ],
-            key: 'Basic',
-            displayName: 'Basic',
-          },
-        ],
-      },
-    }),
-    key: 'largeBody',
-  }
-}
+// v3 splits a feature in two. The server half registers the node so the field
+// can serialise it; everything that touches the editor UI lives in the client
+// half, which is referenced by path string and resolved through the generated
+// import map — the same mechanism as custom admin components.
+export const LargeBodyFeature = createServerFeature({
+  feature: {
+    ClientFeature: '@/fields/lexicalFeatures/largeBody/feature.client#LargeBodyFeatureClient',
+    clientFeatureProps: null,
+    nodes: [createNode({ node: LargeBodyNode })],
+  },
+  key: 'largeBody',
+})

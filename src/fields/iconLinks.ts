@@ -1,5 +1,4 @@
-import * as fa6Icons from 'react-icons/fa6'
-import iconPickerField from '@innovixx/payload-icon-picker-field'
+import { iconPickerField } from '@innovixx/payload-icon-picker-field'
 import type { Field } from 'payload'
 
 import deepMerge from '../utilities/deepMerge'
@@ -94,9 +93,7 @@ const iconLink: IconLinkType = ({ disableLabel = false, overrides = {} } = {}) =
         iconPickerField({
           name: 'icon',
           label: 'Icon',
-          required: true,
-          reactIconPack: fa6Icons,
-          admin: {
+          required: true,          admin: {
             width: '50%',
           },
         }),

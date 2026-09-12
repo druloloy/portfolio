@@ -6,7 +6,66 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
+  auth: {
+    users: UserAuthOperations;
+  };
+  blocks: {};
   collections: {
     pages: Page;
     posts: Post;
@@ -17,13 +76,67 @@ export interface Config {
     comments: Comment;
     stacks: Stack;
     redirects: Redirect;
+    'payload-kv': PayloadKv;
+    'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
+  collectionsJoins: {};
+  collectionsSelect: {
+    pages: PagesSelect<false> | PagesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
+    stacks: StacksSelect<false> | StacksSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+  };
+  db: {
+    defaultIDType: number;
+  };
+  fallbackLocale: null;
   globals: {
     settings: Settings;
     header: Header;
     footer: Footer;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
+  locale: null;
+  widgets: {
+    collections: CollectionsWidget;
+  };
+  user: User;
+  jobs: {
+    tasks: unknown;
+    workflows: unknown;
+  };
+}
+export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
   };
 }
 /**
@@ -40,7 +153,7 @@ export interface Page {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -49,34 +162,37 @@ export interface Page {
         indent: number;
         version: number;
       };
-    } | {
       [k: string]: unknown;
-    }[]
+    };
     links?:
       | {
-          link: {
-            type?: ('reference' | 'custom') | null;
+          link?: {
+            type?: ('reference' | 'custom' | 'iconUrl') | null;
             newTab?: boolean | null;
             reference?: {
               relationTo: 'pages';
-              value: string | Page;
+              value: number | Page;
             } | null;
             url?: string | null;
-            label: string;
+            label?: string | null;
+            iconPicker?: string | null;
+            /**
+             * Choose how the link should be rendered.
+             */
             appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
-            icon?: any | null
+            icon?: string | null;
           };
           id?: string | null;
         }[]
       | null;
-      iconLinks?:
+    iconLinks?:
       | {
           iconLink: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
             reference?: {
               relationTo: 'pages';
-              value: string | Page;
+              value: number | Page;
             } | null;
             url?: string | null;
             icon: string;
@@ -84,39 +200,43 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    media?: string | Media | null;
+    media?: (number | null) | Media;
   };
   layout: (
     | {
         invertBackground?: boolean | null;
         richText: {
           root: {
-              type: string;
-              children: {
-                type: string;
-                version: number;
-                [k: string]: unknown;
-              }[];
-              direction: ('ltr' | 'rtl') | null;
-              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-              indent: number;
+            type: string;
+            children: {
+              type: any;
               version: number;
-            };
-          } | {
-            [k: string]: unknown;
-          }[]
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
         links?:
           | {
-              link: {
-                type?: ('reference' | 'custom') | null;
+              link?: {
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
                 appearance?: ('primary' | 'secondary') | null;
+                icon?: string | null;
               };
               id?: string | null;
             }[]
@@ -135,7 +255,7 @@ export interface Page {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -144,20 +264,24 @@ export interface Page {
                   indent: number;
                   version: number;
                 };
-              } | {
                 [k: string]: unknown;
-              }[]
+              };
               enableLink?: boolean | null;
               link?: {
-                type?: ('reference' | 'custom') | null;
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
-                appearance?: ('default' | 'primary' | 'secondary') | null;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
+                appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                icon?: string | null;
               };
             }[]
           | null;
@@ -168,7 +292,7 @@ export interface Page {
     | {
         invertBackground?: boolean | null;
         position?: ('default' | 'fullscreen') | null;
-        media: string | Media;
+        media: number | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'mediaBlock';
@@ -178,7 +302,7 @@ export interface Page {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -197,30 +321,36 @@ export interface Page {
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocs?:
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
               | {
                   relationTo: 'stacks';
-                  value: string | Stack;
+                  value: number | Stack;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocsTotal?: number | null;
         id?: string | null;
         blockName?: string | null;
@@ -231,7 +361,7 @@ export interface Page {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -245,14 +375,28 @@ export interface Page {
         populateCollection?: 'collection' | null;
         categories?: (number | Category)[] | null;
         limit?: number | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDoc?:
           | (
-              {
-                relationTo: 'stacks';
-                value: string | Stack;
-              }
+              | {
+                  relationTo: 'posts';
+                  value: number | Post;
+                }
+              | {
+                  relationTo: 'projects';
+                  value: number | Project;
+                }
+              | {
+                  relationTo: 'stacks';
+                  value: number | Stack;
+                }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocsTotal?: number | null;
         id?: string | null;
         blockName?: string | null;
@@ -261,14 +405,15 @@ export interface Page {
     | {
         gallery?:
           | {
-              media: string | Media;
+              media: number | Media;
+              id?: string | null;
             }[]
           | null;
         richText: {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -277,9 +422,8 @@ export interface Page {
             indent: number;
             version: number;
           };
-        } | {
           [k: string]: unknown;
-        }[]
+        };
         id?: string | null;
         blockName?: string | null;
         blockType: 'projectBlock';
@@ -289,7 +433,10 @@ export interface Page {
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: string | Media | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
   };
   updatedAt: string;
   createdAt: string;
@@ -302,14 +449,25 @@ export interface Page {
 export interface Media {
   id: number;
   alt: string;
-  caption?:
-    | {
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
         [k: string]: unknown;
-      }[]
-    | null;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
+  thumbnailURL?: string | null;
   filename?: string | null;
   mimeType?: string | null;
   filesize?: number | null;
@@ -325,10 +483,10 @@ export interface Media {
 export interface Category {
   id: number;
   title?: string | null;
-  parent?: (string | null) | Category;
+  parent?: (number | null) | Category;
   breadcrumbs?:
     | {
-        doc?: (string | null) | Category;
+        doc?: (number | null) | Category;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -346,7 +504,7 @@ export interface Post {
   title: string;
   categories?: (number | Category)[] | null;
   publishedAt?: string | null;
-  authors?: (string | User)[] | null;
+  authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -354,12 +512,12 @@ export interface Post {
       }[]
     | null;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'revamp';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'revamp' | 'simple';
     richText: {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -368,26 +526,45 @@ export interface Post {
         indent: number;
         version: number;
       };
-    } | {
       [k: string]: unknown;
-    }[]
+    };
     links?:
       | {
-          link: {
-            type?: ('reference' | 'custom') | null;
+          link?: {
+            type?: ('reference' | 'custom' | 'iconUrl') | null;
             newTab?: boolean | null;
             reference?: {
               relationTo: 'pages';
-              value: string | Page;
+              value: number | Page;
             } | null;
             url?: string | null;
-            label: string;
-            appearance?: ('default' | 'primary' | 'secondary') | null;
+            label?: string | null;
+            iconPicker?: string | null;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+            icon?: string | null;
           };
           id?: string | null;
         }[]
       | null;
-    media?: string | Media | null;
+    iconLinks?:
+      | {
+          iconLink: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?: {
+              relationTo: 'pages';
+              value: number | Page;
+            } | null;
+            url?: string | null;
+            icon: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (number | null) | Media;
   };
   layout: (
     | {
@@ -396,7 +573,7 @@ export interface Post {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -405,21 +582,25 @@ export interface Post {
             indent: number;
             version: number;
           };
-        } | {
           [k: string]: unknown;
-        }[]
+        };
         links?:
           | {
-              link: {
-                type?: ('reference' | 'custom') | null;
+              link?: {
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
                 appearance?: ('primary' | 'secondary') | null;
+                icon?: string | null;
               };
               id?: string | null;
             }[]
@@ -438,7 +619,7 @@ export interface Post {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -447,20 +628,24 @@ export interface Post {
                   indent: number;
                   version: number;
                 };
-              } | {
                 [k: string]: unknown;
-              }[]
+              };
               enableLink?: boolean | null;
               link?: {
-                type?: ('reference' | 'custom') | null;
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
-                appearance?: ('default' | 'primary' | 'secondary') | null;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
+                appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                icon?: string | null;
               };
             }[]
           | null;
@@ -471,7 +656,7 @@ export interface Post {
     | {
         invertBackground?: boolean | null;
         position?: ('default' | 'fullscreen') | null;
-        media: string | Media;
+        media: number | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'mediaBlock';
@@ -481,7 +666,7 @@ export interface Post {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -500,30 +685,36 @@ export interface Post {
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocs?:
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
               | {
                   relationTo: 'stacks';
-                  value: string | Stack;
+                  value: number | Stack;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocsTotal?: number | null;
         id?: string | null;
         blockName?: string | null;
@@ -539,7 +730,7 @@ export interface Post {
               root: {
                 type: string;
                 children: {
-                  type: string;
+                  type: any;
                   version: number;
                   [k: string]: unknown;
                 }[];
@@ -548,21 +739,25 @@ export interface Post {
                 indent: number;
                 version: number;
               };
-            } | {
               [k: string]: unknown;
-            }[]
+            };
             links?:
               | {
-                  link: {
-                    type?: ('reference' | 'custom') | null;
+                  link?: {
+                    type?: ('reference' | 'custom' | 'iconUrl') | null;
                     newTab?: boolean | null;
                     reference?: {
                       relationTo: 'pages';
-                      value: string | Page;
+                      value: number | Page;
                     } | null;
                     url?: string | null;
-                    label: string;
+                    label?: string | null;
+                    iconPicker?: string | null;
+                    /**
+                     * Choose how the link should be rendered.
+                     */
                     appearance?: ('primary' | 'secondary') | null;
+                    icon?: string | null;
                   };
                   id?: string | null;
                 }[]
@@ -581,7 +776,7 @@ export interface Post {
                     root: {
                       type: string;
                       children: {
-                        type: string;
+                        type: any;
                         version: number;
                         [k: string]: unknown;
                       }[];
@@ -590,20 +785,24 @@ export interface Post {
                       indent: number;
                       version: number;
                     };
-                  } | {
                     [k: string]: unknown;
-                  }[]
+                  };
                   enableLink?: boolean | null;
                   link?: {
-                    type?: ('reference' | 'custom') | null;
+                    type?: ('reference' | 'custom' | 'iconUrl') | null;
                     newTab?: boolean | null;
                     reference?: {
                       relationTo: 'pages';
-                      value: string | Page;
+                      value: number | Page;
                     } | null;
                     url?: string | null;
-                    label: string;
-                    appearance?: ('default' | 'primary' | 'secondary') | null;
+                    label?: string | null;
+                    iconPicker?: string | null;
+                    /**
+                     * Choose how the link should be rendered.
+                     */
+                    appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                    icon?: string | null;
                   };
                 }[]
               | null;
@@ -614,7 +813,7 @@ export interface Post {
         | {
             invertBackground?: boolean | null;
             position?: ('default' | 'fullscreen') | null;
-            media: string | Media;
+            media: number | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'mediaBlock';
@@ -624,7 +823,7 @@ export interface Post {
               root: {
                 type: string;
                 children: {
-                  type: string;
+                  type: any;
                   version: number;
                   [k: string]: unknown;
                 }[];
@@ -643,30 +842,36 @@ export interface Post {
               | (
                   | {
                       relationTo: 'posts';
-                      value: string | Post;
+                      value: number | Post;
                     }
                   | {
                       relationTo: 'projects';
-                      value: string | Project;
+                      value: number | Project;
                     }
                 )[]
               | null;
+            /**
+             * This field is auto-populated after-read
+             */
             populatedDocs?:
               | (
                   | {
                       relationTo: 'posts';
-                      value: string | Post;
+                      value: number | Post;
                     }
                   | {
                       relationTo: 'projects';
-                      value: string | Project;
+                      value: number | Project;
                     }
                   | {
                       relationTo: 'stacks';
-                      value: string | Stack;
+                      value: number | Stack;
                     }
                 )[]
               | null;
+            /**
+             * This field is auto-populated after-read
+             */
             populatedDocsTotal?: number | null;
             id?: string | null;
             blockName?: string | null;
@@ -674,12 +879,15 @@ export interface Post {
           }
       )[]
     | null;
-  relatedPosts?: (string | Post)[] | null;
+  relatedPosts?: (number | Post)[] | null;
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: string | Media | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
   };
   updatedAt: string;
   createdAt: string;
@@ -702,7 +910,15 @@ export interface User {
   hash?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
-  password: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -719,7 +935,7 @@ export interface Project {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -728,26 +944,45 @@ export interface Project {
         indent: number;
         version: number;
       };
-    } | {
       [k: string]: unknown;
-    }[]
+    };
     links?:
       | {
-          link: {
-            type?: ('reference' | 'custom') | null;
+          link?: {
+            type?: ('reference' | 'custom' | 'iconUrl') | null;
             newTab?: boolean | null;
             reference?: {
               relationTo: 'pages';
-              value: string | Page;
+              value: number | Page;
             } | null;
             url?: string | null;
-            label: string;
-            appearance?: ('default' | 'primary' | 'secondary') | null;
+            label?: string | null;
+            iconPicker?: string | null;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+            icon?: string | null;
           };
           id?: string | null;
         }[]
       | null;
-    media?: string | Media | null;
+    iconLinks?:
+      | {
+          iconLink: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?: {
+              relationTo: 'pages';
+              value: number | Page;
+            } | null;
+            url?: string | null;
+            icon: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (number | null) | Media;
   };
   layout: (
     | {
@@ -756,7 +991,7 @@ export interface Project {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -765,21 +1000,25 @@ export interface Project {
             indent: number;
             version: number;
           };
-        } | {
           [k: string]: unknown;
-        }[]
+        };
         links?:
           | {
-              link: {
-                type?: ('reference' | 'custom') | null;
+              link?: {
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
                 appearance?: ('primary' | 'secondary') | null;
+                icon?: string | null;
               };
               id?: string | null;
             }[]
@@ -798,7 +1037,7 @@ export interface Project {
                 root: {
                   type: string;
                   children: {
-                    type: string;
+                    type: any;
                     version: number;
                     [k: string]: unknown;
                   }[];
@@ -807,20 +1046,24 @@ export interface Project {
                   indent: number;
                   version: number;
                 };
-              } | {
                 [k: string]: unknown;
-              }[]
+              };
               enableLink?: boolean | null;
               link?: {
-                type?: ('reference' | 'custom') | null;
+                type?: ('reference' | 'custom' | 'iconUrl') | null;
                 newTab?: boolean | null;
                 reference?: {
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null;
                 url?: string | null;
-                label: string;
-                appearance?: ('default' | 'primary' | 'secondary') | null;
+                label?: string | null;
+                iconPicker?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
+                appearance?: ('default' | 'primary' | 'secondary' | 'iconPrimary') | null;
+                icon?: string | null;
               };
             }[]
           | null;
@@ -831,7 +1074,7 @@ export interface Project {
     | {
         invertBackground?: boolean | null;
         position?: ('default' | 'fullscreen') | null;
-        media: string | Media;
+        media: number | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'mediaBlock';
@@ -841,7 +1084,7 @@ export interface Project {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -860,30 +1103,36 @@ export interface Project {
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocs?:
           | (
               | {
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 }
               | {
                   relationTo: 'projects';
-                  value: string | Project;
+                  value: number | Project;
                 }
               | {
                   relationTo: 'stacks';
-                  value: string | Stack;
+                  value: number | Stack;
                 }
             )[]
           | null;
+        /**
+         * This field is auto-populated after-read
+         */
         populatedDocsTotal?: number | null;
         id?: string | null;
         blockName?: string | null;
@@ -892,14 +1141,15 @@ export interface Project {
     | {
         gallery?:
           | {
-              media: string | Media;
+              media: number | Media;
+              id?: string | null;
             }[]
           | null;
         richText: {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -908,20 +1158,22 @@ export interface Project {
             indent: number;
             version: number;
           };
-        } | {
           [k: string]: unknown;
-        }[]
+        };
         id?: string | null;
         blockName?: string | null;
         blockType: 'projectBlock';
       }
   )[];
-  relatedProjects?: (string | Project)[] | null;
+  relatedProjects?: (number | Project)[] | null;
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: string | Media | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
   };
   updatedAt: string;
   createdAt: string;
@@ -935,16 +1187,11 @@ export interface Stack {
   id: number;
   title: string;
   categories?: (number | Category)[] | null;
-  media: string | Media;
+  media: number | Media;
   publishedAt?: string | null;
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: string | Media | null;
-  };
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -953,12 +1200,12 @@ export interface Stack {
  */
 export interface Comment {
   id: number;
-  user?: (string | null) | User;
+  user?: (number | null) | User;
   populatedUser?: {
     id?: string | null;
     name?: string | null;
   };
-  doc?: (string | null) | Post;
+  doc?: (number | null) | Post;
   comment?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -976,13 +1223,81 @@ export interface Redirect {
     reference?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: string | Post;
+          value: number | Post;
         } | null);
     url?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: number;
+  key: string;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents".
+ */
+export interface PayloadLockedDocument {
+  id: number;
+  document?:
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'stacks';
+        value: number | Stack;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
+      } | null);
+  globalSlug?: string | null;
+  user: {
+    relationTo: 'users';
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -995,7 +1310,7 @@ export interface PayloadPreference {
   id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -1023,12 +1338,698 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  publishedAt?: T;
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    iconPicker?: T;
+                    appearance?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        iconLinks?:
+          | T
+          | {
+              iconLink?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+      };
+  layout?:
+    | T
+    | {
+        cta?:
+          | T
+          | {
+              invertBackground?: T;
+              richText?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              invertBackground?: T;
+              columns?:
+                | T
+                | {
+                    id?: T;
+                    size?: T;
+                    richText?: T;
+                    enableLink?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        mediaBlock?:
+          | T
+          | {
+              invertBackground?: T;
+              position?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        archive?:
+          | T
+          | {
+              introContent?: T;
+              populateBy?: T;
+              relationTo?: T;
+              categories?: T;
+              limit?: T;
+              selectedDocs?: T;
+              populatedDocs?: T;
+              populatedDocsTotal?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'stacks-parade'?:
+          | T
+          | {
+              introContent?: T;
+              populateCollection?: T;
+              categories?: T;
+              limit?: T;
+              populatedDoc?: T;
+              populatedDocsTotal?: T;
+              id?: T;
+              blockName?: T;
+            };
+        projectBlock?:
+          | T
+          | {
+              gallery?:
+                | T
+                | {
+                    media?: T;
+                    id?: T;
+                  };
+              richText?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  categories?: T;
+  publishedAt?: T;
+  authors?: T;
+  populatedAuthors?:
+    | T
+    | {
+        id?: T;
+        name?: T;
+      };
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    iconPicker?: T;
+                    appearance?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        iconLinks?:
+          | T
+          | {
+              iconLink?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+      };
+  layout?:
+    | T
+    | {
+        cta?:
+          | T
+          | {
+              invertBackground?: T;
+              richText?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              invertBackground?: T;
+              columns?:
+                | T
+                | {
+                    id?: T;
+                    size?: T;
+                    richText?: T;
+                    enableLink?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        mediaBlock?:
+          | T
+          | {
+              invertBackground?: T;
+              position?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        archive?:
+          | T
+          | {
+              introContent?: T;
+              populateBy?: T;
+              relationTo?: T;
+              categories?: T;
+              limit?: T;
+              selectedDocs?: T;
+              populatedDocs?: T;
+              populatedDocsTotal?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  enablePremiumContent?: T;
+  premiumContent?:
+    | T
+    | {
+        cta?:
+          | T
+          | {
+              invertBackground?: T;
+              richText?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              invertBackground?: T;
+              columns?:
+                | T
+                | {
+                    id?: T;
+                    size?: T;
+                    richText?: T;
+                    enableLink?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        mediaBlock?:
+          | T
+          | {
+              invertBackground?: T;
+              position?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        archive?:
+          | T
+          | {
+              introContent?: T;
+              populateBy?: T;
+              relationTo?: T;
+              categories?: T;
+              limit?: T;
+              selectedDocs?: T;
+              populatedDocs?: T;
+              populatedDocsTotal?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  relatedPosts?: T;
+  slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  categories?: T;
+  publishedAt?: T;
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    iconPicker?: T;
+                    appearance?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        iconLinks?:
+          | T
+          | {
+              iconLink?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    icon?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+      };
+  layout?:
+    | T
+    | {
+        cta?:
+          | T
+          | {
+              invertBackground?: T;
+              richText?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              invertBackground?: T;
+              columns?:
+                | T
+                | {
+                    id?: T;
+                    size?: T;
+                    richText?: T;
+                    enableLink?: T;
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                          iconPicker?: T;
+                          appearance?: T;
+                          icon?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        mediaBlock?:
+          | T
+          | {
+              invertBackground?: T;
+              position?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        archive?:
+          | T
+          | {
+              introContent?: T;
+              populateBy?: T;
+              relationTo?: T;
+              categories?: T;
+              limit?: T;
+              selectedDocs?: T;
+              populatedDocs?: T;
+              populatedDocsTotal?: T;
+              id?: T;
+              blockName?: T;
+            };
+        projectBlock?:
+          | T
+          | {
+              gallery?:
+                | T
+                | {
+                    media?: T;
+                    id?: T;
+                  };
+              richText?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  relatedProjects?: T;
+  slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  roles?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  user?: T;
+  populatedUser?:
+    | T
+    | {
+        id?: T;
+        name?: T;
+      };
+  doc?: T;
+  comment?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stacks_select".
+ */
+export interface StacksSelect<T extends boolean = true> {
+  title?: T;
+  categories?: T;
+  media?: T;
+  publishedAt?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents_select".
+ */
+export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences_select".
+ */
+export interface PayloadPreferencesSelect<T extends boolean = true> {
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations_select".
+ */
+export interface PayloadMigrationsSelect<T extends boolean = true> {
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings".
  */
 export interface Settings {
   id: number;
-  postsPage?: (string | null) | Page;
-  projectsPage?: (string | null) | Page;
+  postsPage?: (number | null) | Page;
+  projectsPage?: (number | null) | Page;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1040,15 +2041,16 @@ export interface Header {
   id: number;
   navItems?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
+        link?: {
+          type?: ('reference' | 'custom' | 'iconUrl') | null;
           newTab?: boolean | null;
           reference?: {
             relationTo: 'pages';
-            value: string | Page;
+            value: number | Page;
           } | null;
           url?: string | null;
-          label: string;
+          label?: string | null;
+          iconPicker?: string | null;
         };
         id?: string | null;
       }[]
@@ -1064,21 +2066,98 @@ export interface Footer {
   id: number;
   navItems?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
+        link?: {
+          type?: ('reference' | 'custom' | 'iconUrl') | null;
           newTab?: boolean | null;
           reference?: {
             relationTo: 'pages';
-            value: string | Page;
+            value: number | Page;
           } | null;
           url?: string | null;
-          label: string;
+          label?: string | null;
+          iconPicker?: string | null;
         };
         id?: string | null;
       }[]
     | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  postsPage?: T;
+  projectsPage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              iconPicker?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              iconPicker?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auth".
+ */
+export interface Auth {
+  [k: string]: unknown;
 }
 
 

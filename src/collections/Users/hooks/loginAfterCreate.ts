@@ -1,20 +1,19 @@
-import type { AfterChangeHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 
-export const loginAfterCreate: AfterChangeHook = async ({
+export const loginAfterCreate: CollectionAfterChangeHook = async ({
   doc,
   req,
-  req: { payload, body = {}, res },
+  req: { payload, data = {} },
   operation,
 }) => {
   if (operation === 'create' && !req.user) {
-    const { email, password } = body
+    const { email, password } = data as Record<string, string>
 
     if (email && password) {
       const { user, token } = await payload.login({
         collection: 'users',
         data: { email, password },
         req,
-        res,
       })
 
       return {

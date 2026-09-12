@@ -1,8 +1,8 @@
-import type { BeforeChangeHook } from 'payload'
+import type { CollectionBeforeChangeHook } from 'payload'
 
-export const populatePublishedAt: BeforeChangeHook = ({ data, req, operation }) => {
+export const populatePublishedAt: CollectionBeforeChangeHook = ({ data, req, operation }) => {
   if (operation === 'create' || operation === 'update') {
-    if (req.body && !req.body.publishedAt) {
+    if (req.data && !req.data.publishedAt) {
       const now = new Date()
       return {
         ...data,

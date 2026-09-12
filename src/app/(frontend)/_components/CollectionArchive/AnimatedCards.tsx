@@ -6,7 +6,7 @@ import { Card } from '../Card'
 import classes from './index.module.scss'
 
 type Props = {
-  cards: Array<string | Post | Project>
+  cards: Array<number | Post | Project>
   relationTo: 'posts' | 'projects' | 'stacks'
 } & React.HTMLProps<HTMLDivElement>
 

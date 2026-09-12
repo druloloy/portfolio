@@ -1,9 +1,9 @@
-import type { AfterReadHook } from 'payload'
+import type { CollectionAfterReadHook } from 'payload'
 
 import { adminsOrPublished } from '../access/adminsOrPublished'
 import type { Page, Post, Project, Stack } from '../payload-types'
 
-export const populateArchiveBlock: AfterReadHook = async ({ doc, context, req }) => {
+export const populateArchiveBlock: CollectionAfterReadHook = async ({ doc, context, req }) => {
   // pre-populate the archive block if `populateBy` is `collection`
   // then hydrate it on your front-end
   const payload = req.payload

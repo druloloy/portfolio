@@ -1,13 +1,10 @@
-import * as fa6Icons from 'react-icons/fa6'
-import iconPickerField from '@innovixx/payload-icon-picker-field'
+import { iconPickerField } from '@innovixx/payload-icon-picker-field'
 import { Block, Field } from 'payload'
 
 const iconContactFields: Field[] = [
   iconPickerField({
     name: 'icon',
-    label: 'Icon',
-    reactIconPack: fa6Icons,
-    admin: {
+    label: 'Icon',    admin: {
       condition: (_, siblingData) => siblingData?.appearance === 'iconPrimary',
     },
   }),

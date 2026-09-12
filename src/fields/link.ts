@@ -1,5 +1,4 @@
-import * as fa6Icons from 'react-icons/fa6'
-import iconPickerField from '@innovixx/payload-icon-picker-field'
+import { iconPickerField } from '@innovixx/payload-icon-picker-field'
 import type { Field } from 'payload'
 
 import deepMerge from '../utilities/deepMerge'
@@ -130,9 +129,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
         },
         iconPickerField({
           name: 'iconPicker',
-          label: 'Icon',
-          reactIconPack: fa6Icons,
-          admin: {
+          label: 'Icon',          admin: {
             condition: (_, siblingData) => siblingData?.type === 'iconUrl',
           },
         }),
@@ -168,9 +165,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
     linkResult.fields.push(
       iconPickerField({
         name: 'icon',
-        label: 'Icon',
-        reactIconPack: fa6Icons,
-        admin: {
+        label: 'Icon',        admin: {
           condition: (_, siblingData) => siblingData?.appearance === 'iconPrimary',
         },
       }),

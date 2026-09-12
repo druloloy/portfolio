@@ -1,9 +1,9 @@
-import type { AfterChangeHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 
 import { revalidate } from '../../../utilities/revalidate'
 
 // Revalidate the post that is associated with this comment
-export const revalidatePost: AfterChangeHook = async ({ doc: commentDoc, req: { payload } }) => {
+export const revalidatePost: CollectionAfterChangeHook = async ({ doc: commentDoc, req: { payload } }) => {
   if (commentDoc._status === 'published' && commentDoc.doc) {
     // lookup the full parent doc to get the slug
     if (typeof commentDoc.doc === 'string') {

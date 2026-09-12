@@ -1,4 +1,4 @@
-import type { AfterChangeHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 
 import { revalidate } from '../../../utilities/revalidate'
 
@@ -6,7 +6,7 @@ import { revalidate } from '../../../utilities/revalidate'
 // Notice that the hook itself is not async and we are not awaiting `revalidate`
 // Only revalidate existing docs that are published
 // Don't scope to `operation` in order to purge static demo projects
-export const revalidateProject: AfterChangeHook = ({ doc, req: { payload } }) => {
+export const revalidateProject: CollectionAfterChangeHook = ({ doc, req: { payload } }) => {
   if (doc._status === 'published') {
     revalidate({ payload, collection: 'projects', slug: doc.slug })
   }
