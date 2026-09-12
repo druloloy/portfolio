@@ -73,6 +73,9 @@
     border: 2px solid var(--theme-color-secondary);
     border-radius: 8px;
     background-color: var(--theme-color-primary);
+    // The media sits flush against the top edge with square corners of its own,
+    // so without this it renders over the rounded corners of the border.
+    overflow: hidden;
 
     p {
       font: 400 max(16px, 1vw) / max(20px, 1.5vw) var(--font-work-sans);
