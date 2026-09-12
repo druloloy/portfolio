@@ -1,7 +1,7 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { payloadToken } from '../../_api/token'
+import { payloadToken } from '@/app/(frontend)/_api/token'
 
 export async function GET(
   req: Request & {
@@ -35,7 +35,7 @@ export async function GET(
   const userRes = await userReq.json()
 
   if (!userReq.ok || !userRes?.user) {
-    draftMode().disable()
+    (await draftMode()).disable()
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
@@ -43,7 +43,7 @@ export async function GET(
     return new Response('Invalid token', { status: 401 })
   }
 
-  draftMode().enable()
+  (await draftMode()).enable()
 
   redirect(url)
 }

@@ -2,7 +2,7 @@ import { revalidateTag } from 'next/cache'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-import { getRevalidationKey } from '../../../payload/utilities/revalidationKey'
+import { getRevalidationKey } from '@/payload/utilities/revalidationKey'
 
 export async function GET(request: NextRequest): Promise<Response> {
   const collection = request.nextUrl.searchParams.get('collection')
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
   // Globals are fetched under a single tag each, since they have no slug.
   if (typeof global === 'string' && global) {
-    revalidateTag(`global_${global}`)
+    revalidateTag(`global_${global}`, 'max')
     return NextResponse.json({ revalidated: true, now: Date.now() })
   }
 
@@ -28,8 +28,8 @@ export async function GET(request: NextRequest): Promise<Response> {
     // Bust the single document and any list that includes it. `fetchDocs` tags
     // its results with the bare collection name, so a publish has to clear both
     // or an archive block keeps showing the old title.
-    revalidateTag(`${collection}_${slug}`)
-    revalidateTag(collection)
+    revalidateTag(`${collection}_${slug}`, 'max')
+    revalidateTag(collection, 'max')
     return NextResponse.json({ revalidated: true, now: Date.now() })
   }
 
