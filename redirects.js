@@ -3,7 +3,7 @@
 // This is not a problem in production as Payload is booted up before building Next.js
 // For this reason the errors can be silently ignored in dev mode
 
-module.exports = async () => {
+export default async function redirects() {
   const internetExplorerRedirect = {
     source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
     has: [

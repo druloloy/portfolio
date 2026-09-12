@@ -21,7 +21,7 @@ const policies = {
   'connect-src': ["'self'", 'https://www.google-analytics.com', 'https://maps.googleapis.com'],
 }
 
-module.exports = Object.entries(policies)
+export default Object.entries(policies)
   .map(([key, value]) => {
     if (Array.isArray(value)) {
       return `${key} ${value.join(' ')}`
