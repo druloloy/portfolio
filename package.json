@@ -20,7 +20,11 @@
     "test:watch": "cross-env NODE_OPTIONS=--no-deprecation vitest --config ./vitest.config.mts",
     "init_key:dev": "node init_key.cjs -d ./keystore/keyfile.development.json.enc",
     "init_key:prod": "node init_key.cjs -d ./keystore/keyfile.production.json.enc",
-    "migrate:down": "node scripts/with-session-db.cjs migrate:down"
+    "migrate:down": "node scripts/with-session-db.cjs migrate:down",
+    "db:backup": "node scripts/backup-database.cjs",
+    "db:dump-schema": "node scripts/dump-schema.cjs",
+    "db:drop": "node scripts/drop-payload-schema.cjs",
+    "db:restore": "node scripts/restore-content.cjs"
   },
   "dependencies": {
     "@faceless-ui/modal": "3.0.0",

@@ -62,8 +62,8 @@ const child = spawn(
   },
 )
 
-child.on('exit', code => process.exit(code === null ? 1 : code))
-child.on('error', err => {
+child.on('exit', (code) => process.exit(code === null ? 1 : code))
+child.on('error', (err) => {
   console.error('[db] failed to start the Payload CLI:', err.message)
   process.exit(1)
 })
