@@ -30,6 +30,22 @@ const generateTitle: GenerateTitle = () => 'My Website'
 
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || ''
 
+// Payload checks the request origin against these lists and rejects anything
+// else as unauthorised. That does not look like a CORS problem from the admin
+// panel — the page renders, but every action fails with "you must be logged
+// in" even though a valid session exists.
+//
+// NEXT_PUBLIC_SERVER_URL is the production origin, so on its own it locks out
+// local development. scripts/dev-local.js used to mask this by rewriting that
+// variable; listing the local origin here fixes it where the reason is legible.
+const devPort = process.env.PORT || 3000
+const allowedOrigins = [
+  serverURL,
+  ...(process.env.NODE_ENV === 'development'
+    ? [`http://localhost:${devPort}`, `http://127.0.0.1:${devPort}`]
+    : []),
+].filter(Boolean)
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -57,8 +73,8 @@ export default buildConfig({
   sharp,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   graphQL: { schemaOutputFile: path.resolve(dirname, 'generated-schema.graphql') },
-  cors: [serverURL].filter(Boolean),
-  csrf: [serverURL].filter(Boolean),
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   plugins: [
     redirectsPlugin({ collections: ['pages', 'posts'] }),
     nestedDocsPlugin({ collections: ['categories'] }),
