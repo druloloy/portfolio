@@ -12,14 +12,15 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
-    "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
-    "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
+    "migrate:create": "node scripts/with-session-db.cjs migrate:create",
+    "migrate": "node scripts/with-session-db.cjs migrate",
+    "migrate:status": "node scripts/with-session-db.cjs migrate:status",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "test": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "test:watch": "cross-env NODE_OPTIONS=--no-deprecation vitest --config ./vitest.config.mts",
     "init_key:dev": "node init_key.cjs -d ./keystore/keyfile.development.json.enc",
-    "init_key:prod": "node init_key.cjs -d ./keystore/keyfile.production.json.enc"
+    "init_key:prod": "node init_key.cjs -d ./keystore/keyfile.production.json.enc",
+    "migrate:down": "node scripts/with-session-db.cjs migrate:down"
   },
   "dependencies": {
     "@faceless-ui/modal": "3.0.0",
