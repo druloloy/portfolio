@@ -49,9 +49,19 @@ export const populateArchiveBlock: CollectionAfterReadHook = async ({ doc, conte
           return {
             ...block,
             populatedDocsTotal: res.totalDocs,
-            populatedDocs: res.docs.map((thisDoc: Post) => ({
+            // The whole document, not its id. This hook runs in afterRead, which
+            // is after Payload has populated relationships by depth, so an id
+            // put here is never resolved and the front end receives a number
+            // where it expects a document.
+            //
+            // GraphQL hid that: value had its own field resolver, so asking
+            // for subfields populated it on demand. Reading the same page over
+            // REST or the Local API returned bare ids, and the archive rendered
+            // nothing until a client-side fetch filled it in — too late for the
+            // scroll animation, which had already found an empty track.
+            populatedDocs: res.docs.map(thisDoc => ({
               relationTo: archiveBlock.relationTo,
-              value: thisDoc.id,
+              value: thisDoc,
             })),
           }
         }
